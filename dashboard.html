@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Dashboard — Khaana Peena</title>
+<link rel="stylesheet" href="css/style.css"/>
+<link rel="stylesheet" href="css/components.css"/>
+<link rel="stylesheet" href="css/animations.css"/>
+<style>
+.ring-wrap{position:relative;width:100px;height:100px;display:flex;align-items:center;justify-content:center;}
+.ring-wrap svg{position:absolute;top:0;left:0;transform:rotate(-90deg);}
+.ring-center{text-align:center;z-index:1;}
+.ring-num{font-size:1.3rem;font-weight:800;font-family:var(--font-heading);}
+.ring-lbl{font-size:.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;}
+.quick-btn{display:flex;flex-direction:column;align-items:center;gap:var(--sp-2);padding:var(--sp-4);border:1px solid var(--border);border-radius:var(--r-lg);background:var(--bg-card);text-decoration:none;color:var(--text-secondary);transition:all var(--t-fast);cursor:pointer;}
+.quick-btn:hover{border-color:var(--border-warm);color:var(--primary);transform:translateY(-3px);box-shadow:var(--shadow-md);}
+.quick-icon{font-size:1.8rem;}
+.quick-label{font-size:.78rem;font-weight:600;text-align:center;}
+.meal-slot{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-xl);padding:var(--sp-5);display:flex;gap:var(--sp-4);align-items:center;transition:all var(--t-normal);cursor:pointer;}
+.meal-slot:hover{border-color:var(--border-warm);box-shadow:var(--shadow-md);}
+.meal-slot-emoji{font-size:2.8rem;width:70px;height:70px;display:flex;align-items:center;justify-content:center;background:var(--grad-card);border-radius:var(--r-md);flex-shrink:0;}
+.food-log-item{display:flex;align-items:center;gap:var(--sp-3);padding:var(--sp-3) 0;border-bottom:1px solid var(--border);}
+.food-log-item:last-child{border-bottom:none;}
+.water-drops{display:flex;gap:var(--sp-2);flex-wrap:wrap;}
+.drop{width:32px;height:40px;border-radius:50% 50% 50% 50% / 30% 30% 70% 70%;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.12);cursor:pointer;transition:all var(--t-fast);display:flex;align-items:center;justify-content:center;font-size:1rem;}
+.drop.filled{background:rgba(52,152,219,.3);border-color:rgba(52,152,219,.6);}
+.drop:hover{border-color:rgba(52,152,219,.5);}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand"><span class="nav-logo-text">Khaana Peena</span><span class="nav-logo-dot"></span></a>
+    <div class="nav-links">
+      <a href="dashboard.html" class="nav-link active">Dashboard</a>
+      <a href="meal-planner.html" class="nav-link">Meal Planner</a>
+      <a href="chai-studio.html" class="nav-link">☕ Chai Studio</a>
+      <a href="diet-plan.html" class="nav-link">Diet Plan</a>
+      <a href="gym-plan.html" class="nav-link">Gym Plan</a>
+    </div>
+    <div class="nav-actions" id="nav-user-area"></div>
+  </div>
+</nav>
+
+<div class="app-layout" style="padding-top:var(--nav-h);">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div id="sidebar-profile" style="margin-bottom:var(--sp-6);"></div>
+    <div class="sidebar-section">
+      <span class="sidebar-label">Main</span>
+      <a href="dashboard.html" class="sidebar-link active"><span class="icon">🏠</span> Dashboard</a>
+      <a href="meal-planner.html" class="sidebar-link"><span class="icon">🍽️</span> Meal Planner</a>
+      <a href="chai-studio.html" class="sidebar-link"><span class="icon">☕</span> Chai Studio</a>
+      <a href="customize.html" class="sidebar-link"><span class="icon">🎛️</span> Customize Food</a>
+    </div>
+    <div class="sidebar-section">
+      <span class="sidebar-label">Planning</span>
+      <a href="diet-plan.html" class="sidebar-link"><span class="icon">📋</span> Diet Plan</a>
+      <a href="gym-plan.html" class="sidebar-link"><span class="icon">🏋️</span> Gym Plan</a>
+      <a href="order.html" class="sidebar-link"><span class="icon">📦</span> Order Food</a>
+    </div>
+    <div class="sidebar-section">
+      <span class="sidebar-label">Account</span>
+      <a href="profile.html" class="sidebar-link"><span class="icon">👤</span> Health Profile</a>
+      <a href="#" class="sidebar-link" onclick="KP.logout()"><span class="icon">🚪</span> Logout</a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+
+    <!-- GREETING HEADER -->
+    <div class="page-header anim-slide-down" id="greeting-header">
+      <div class="flex justify-between items-center flex-wrap gap-4">
+        <div>
+          <h1 id="greeting-text" style="font-size:1.8rem;">Good morning! 🌅</h1>
+          <p id="greeting-date" style="margin-top:var(--sp-1);font-size:.9rem;"></p>
+        </div>
+        <div class="flex gap-3">
+          <a href="meal-planner.html" class="btn btn-primary btn-sm">🍽️ Today's Plan</a>
+          <a href="chai-studio.html" class="btn btn-secondary btn-sm">☕ Make Chai</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- HEALTH TIP -->
+    <div id="health-tip-card" class="health-alert safe anim-fade-in" style="margin-bottom:var(--sp-6);">
+      <span class="alert-icon" id="tip-icon">💚</span>
+      <div><strong>Health Tip of the Day:</strong> <span id="tip-text">Loading...</span></div>
+    </div>
+
+    <!-- MACRO STATS -->
+    <div class="grid grid-4 anim-slide-up" style="margin-bottom:var(--sp-8);" id="macro-stats">
+      <div class="stat-card">
+        <div class="stat-icon">🔥</div>
+        <div class="stat-value grad-text" id="stat-cals">0</div>
+        <div class="stat-label">Calories Today</div>
+        <div style="margin-top:var(--sp-2);">
+          <div class="progress-bar"><div class="progress-fill" id="cal-bar" style="width:0%;"></div></div>
+          <div style="font-size:.72rem;color:var(--text-muted);margin-top:4px;" id="cal-goal-text">Goal: -- kcal</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">💪</div>
+        <div class="stat-value" id="stat-protein" style="color:var(--accent);">0g</div>
+        <div class="stat-label">Protein</div>
+        <div style="margin-top:var(--sp-2);">
+          <div class="progress-bar"><div class="progress-fill health" id="protein-bar" style="width:0%;"></div></div>
+          <div style="font-size:.72rem;color:var(--text-muted);margin-top:4px;" id="protein-goal-text">Goal: -- g</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🫙</div>
+        <div class="stat-value" id="stat-carbs" style="color:var(--warning);">0g</div>
+        <div class="stat-label">Carbohydrates</div>
+        <div style="margin-top:var(--sp-2);">
+          <div class="progress-bar"><div class="progress-fill warning" id="carb-bar" style="width:0%;"></div></div>
+          <div style="font-size:.72rem;color:var(--text-muted);margin-top:4px;" id="carb-goal-text">Goal: -- g</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">💧</div>
+        <div class="stat-value" id="stat-water" style="color:var(--info);">0</div>
+        <div class="stat-label">Water Glasses</div>
+        <div style="margin-top:var(--sp-2);">
+          <div class="progress-bar"><div class="progress-fill" id="water-bar" style="width:0%;background:var(--info);"></div></div>
+          <div style="font-size:.72rem;color:var(--text-muted);margin-top:4px;" id="water-goal-text">Goal: 8 glasses</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TWO COLUMN: MEALS + SIDEBAR -->
+    <div class="grid grid-2" style="gap:var(--sp-6);margin-bottom:var(--sp-8);">
+
+      <!-- TODAY'S MEALS -->
+      <div>
+        <div class="flex justify-between items-center" style="margin-bottom:var(--sp-4);">
+          <h4>🍽️ Today's Meal Plan</h4>
+          <a href="meal-planner.html" class="btn btn-ghost btn-sm">View All</a>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:var(--sp-3);" id="today-meals"></div>
+      </div>
+
+      <!-- RIGHT PANEL -->
+      <div style="display:flex;flex-direction:column;gap:var(--sp-5);">
+
+        <!-- WATER TRACKER -->
+        <div class="info-card">
+          <div class="flex justify-between items-center" style="margin-bottom:var(--sp-4);">
+            <h5>💧 Water Tracker</h5>
+            <span id="water-count-text" style="font-size:.82rem;color:var(--info);font-weight:700;">0 / 8</span>
+          </div>
+          <div class="water-drops" id="water-drops-grid"></div>
+          <div style="margin-top:var(--sp-3);font-size:.78rem;color:var(--text-muted);">Tap each drop when you drink a glass of water</div>
+        </div>
+
+        <!-- HEALTH SCORE -->
+        <div class="info-card">
+          <h5 style="margin-bottom:var(--sp-5);">🏆 Today's Health Score</h5>
+          <div class="flex items-center gap-5">
+            <div class="ring-wrap">
+              <svg width="100" height="100">
+                <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="8"/>
+                <circle id="health-ring" cx="50" cy="50" r="42" fill="none" stroke="var(--accent)" stroke-width="8" stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="264"/>
+              </svg>
+              <div class="ring-center">
+                <div class="ring-num grad-text-health" id="health-ring-val">--</div>
+                <div class="ring-lbl">/ 100</div>
+              </div>
+            </div>
+            <div>
+              <div id="health-badge" class="badge badge-green" style="margin-bottom:var(--sp-3);">Good</div>
+              <p style="font-size:.82rem;">Based on your meals & conditions today.</p>
+              <a href="profile.html" class="btn btn-ghost btn-sm" style="margin-top:var(--sp-3);">View Details</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- QUICK ACTIONS -->
+        <div class="info-card">
+          <h5 style="margin-bottom:var(--sp-4);">⚡ Quick Actions</h5>
+          <div class="grid grid-auto-sm" style="gap:var(--sp-3);">
+            <a href="chai-studio.html" class="quick-btn">
+              <span class="quick-icon">☕</span><span class="quick-label">Chai Studio</span>
+            </a>
+            <a href="customize.html" class="quick-btn">
+              <span class="quick-icon">🎛️</span><span class="quick-label">Customize Meal</span>
+            </a>
+            <a href="order.html" class="quick-btn">
+              <span class="quick-icon">📦</span><span class="quick-label">Order Now</span>
+            </a>
+            <a href="meal-planner.html" class="quick-btn">
+              <span class="quick-icon">🔄</span><span class="quick-label">Regenerate Plan</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CONDITIONS BANNER (shown if profile has conditions) -->
+    <div id="conditions-banner" style="display:none;margin-bottom:var(--sp-6);">
+      <div class="glass-card">
+        <div class="flex justify-between items-center" style="margin-bottom:var(--sp-4);">
+          <h5>🏥 Your Health Profile Active</h5>
+          <a href="profile.html" class="btn btn-ghost btn-sm">Edit Profile</a>
+        </div>
+        <div id="conditions-list" class="flex gap-2 flex-wrap"></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+<script src="js/app.js"></script>
+<script src="js/meal-data.js"></script>
+<script src="js/health-engine.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  if (!KP.requireAuth()) return;
+
+  const user    = KP.getUser();
+  const profile = KP.getProfile() || {};
+
+  // Greeting
+  const gr = KP.getGreeting();
+  document.getElementById('greeting-text').textContent = `${gr.msg}, ${user.name?.split(' ')[0] || 'Friend'}! ${gr.emoji}`;
+  document.getElementById('greeting-date').textContent = KP.today();
+
+  // Health tip
+  const tip = KP.getTip(profile);
+  document.getElementById('tip-icon').textContent = tip.icon;
+  document.getElementById('tip-text').textContent  = tip.tip;
+
+  // Macro targets
+  const targets = HealthEngine.getMacroTargets(profile);
+  const consumed = HealthEngine.getTodayConsumed();
+
+  document.getElementById('cal-goal-text').textContent     = `Goal: ${targets.calories} kcal`;
+  document.getElementById('protein-goal-text').textContent = `Goal: ${targets.protein}g`;
+  document.getElementById('carb-goal-text').textContent    = `Goal: ${targets.carbs}g`;
+  document.getElementById('water-goal-text').textContent   = `Goal: ${profile.waterGoal || 8} glasses`;
+
+  animateStat('stat-cals',    consumed.calories,      targets.calories,     'cal-bar',     '%');
+  animateStat('stat-protein', consumed.protein + 'g', targets.protein,      'protein-bar', 'g');
+  animateStat('stat-carbs',   consumed.carbs + 'g',   targets.carbs,        'carb-bar',    'g');
+
+  // Health score
+  const avgScore = profile.conditions?.length ? 78 : 82;
+  const score = Math.min(100, avgScore + Math.floor(Math.random()*10));
+  const offset = 264 - (score/100)*264;
+  setTimeout(() => {
+    document.getElementById('health-ring').style.strokeDashoffset = offset;
+    document.getElementById('health-ring').style.transition = 'stroke-dashoffset 1s ease';
+  }, 400);
+  document.getElementById('health-ring-val').textContent = score;
+  const badge = HealthEngine.getScoreBadge(score);
+  document.getElementById('health-badge').className = `badge ${badge.cls}`;
+  document.getElementById('health-badge').textContent = badge.label;
+
+  // Meal plan
+  const plan = HealthEngine.getDailyPlan(profile);
+  const mealSlots = [
+    { type:'breakfast', label:'Breakfast', time: profile.mealTimings?.breakfast || '8:00 AM', icon:'☀️' },
+    { type:'lunch',     label:'Lunch',     time: profile.mealTimings?.lunch     || '1:00 PM', icon:'🌤️' },
+    { type:'snack',     label:'Snack',     time: profile.mealTimings?.snack     || '4:30 PM', icon:'🍵' },
+    { type:'dinner',    label:'Dinner',    time: profile.mealTimings?.dinner    || '8:00 PM', icon:'🌙' }
+  ];
+
+  const mealsEl = document.getElementById('today-meals');
+  mealSlots.forEach(slot => {
+    const food = plan[slot.type];
+    if (!food) return;
+    const div = document.createElement('div');
+    div.className = 'meal-slot reveal';
+    div.onclick = () => window.location.href = `meal-planner.html?type=${slot.type}`;
+    const badge = HealthEngine.getScoreBadge(food.score || food.healthScore || 80);
+    div.innerHTML = `
+      <div class="meal-slot-emoji">${food.emoji}</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:.75rem;color:var(--text-muted);margin-bottom:2px;">${slot.icon} ${slot.label} · ${slot.time}</div>
+        <div style="font-weight:700;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${food.name}</div>
+        <div style="font-size:.78rem;color:var(--text-muted);margin-top:2px;">${food.desc?.substring(0,50)}...</div>
+        <div class="flex gap-2 items-center" style="margin-top:var(--sp-2);">
+          <span class="badge badge-primary">${food.calories} kcal</span>
+          <span class="badge ${badge.cls}">${badge.label}</span>
+        </div>
+      </div>
+      <div class="flex flex-col gap-2 items-end">
+        <a href="customize.html?food=${food.id}" class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">Customize</a>
+      </div>`;
+    mealsEl.appendChild(div);
+  });
+
+  // Water tracker
+  const waterGoal = parseInt(profile.waterGoal) || 8;
+  const waterDrunk = KP.load('water_today', {total:0, date:new Date().toDateString()});
+  const todayDrunk = waterDrunk.date === new Date().toDateString() ? waterDrunk.total : 0;
+  document.getElementById('stat-water').textContent = todayDrunk;
+  document.getElementById('water-count-text').textContent = `${todayDrunk} / ${waterGoal}`;
+
+  const dropsEl = document.getElementById('water-drops-grid');
+  for (let i = 0; i < waterGoal; i++) {
+    const drop = document.createElement('div');
+    drop.className = `drop ${i < todayDrunk ? 'filled' : ''}`;
+    drop.textContent = i < todayDrunk ? '💧' : '';
+    drop.dataset.index = i;
+    drop.onclick = () => toggleWater(i, dropsEl, waterGoal);
+    dropsEl.appendChild(drop);
+  }
+
+  // Conditions banner
+  if (profile.conditions?.length && !profile.conditions.includes('general')) {
+    document.getElementById('conditions-banner').style.display = 'block';
+    const condList = document.getElementById('conditions-list');
+    const icons = { diabetes:'🩸', hypertension:'❤️', thyroid:'🦋', 'weight-loss':'⚖️', gym:'🏋️', lactoseIntolerant:'🥛', glutenFree:'🌾', pregnancy:'🤰' };
+    profile.conditions.forEach(c => {
+      const span = document.createElement('span');
+      span.className = 'badge badge-primary';
+      span.textContent = `${icons[c]||'•'} ${c.replace('-',' ').replace(/\b\w/g,l=>l.toUpperCase())}`;
+      condList.appendChild(span);
+    });
+  }
+
+  KP.initReveal();
+});
+
+function animateStat(valId, current, target, barId, suffix='') {
+  const el = document.getElementById(valId);
+  const bar = document.getElementById(barId);
+  const val = typeof current === 'string' ? parseFloat(current) : current;
+  el.textContent = typeof current === 'string' ? current : current + suffix;
+  const pct = Math.min(100, Math.round((val / target) * 100));
+  setTimeout(() => { bar.style.width = pct + '%'; }, 300);
+}
+
+function toggleWater(idx, container, goal) {
+  const drops = container.querySelectorAll('.drop');
+  const newCount = idx + 1;
+  drops.forEach((d, i) => {
+    d.classList.toggle('filled', i < newCount);
+    d.textContent = i < newCount ? '💧' : '';
+  });
+  document.getElementById('stat-water').textContent = newCount;
+  document.getElementById('water-count-text').textContent = `${newCount} / ${goal}`;
+  document.getElementById('water-bar').style.width = Math.min(100, (newCount/goal)*100) + '%';
+  KP.save('water_today', { total: newCount, date: new Date().toDateString() });
+  if (newCount === goal) KP.toast('💧 Daily water goal reached! Amazing!','success');
+}
+</script>
+<div style="text-align: center; padding: 15px; font-weight: bold; background: var(--bg-secondary); color: var(--text-primary); border-top: 1px solid var(--border); width: 100%; position: relative; z-index: 1000; font-size: 1.1rem; letter-spacing: 0.5px;">
+  Made with ❤️ by Avii
+</div>
+</body>
+</html>

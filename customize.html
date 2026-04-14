@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Customize Food — Khaana Peena</title>
+<link rel="stylesheet" href="css/style.css"/>
+<link rel="stylesheet" href="css/components.css"/>
+<link rel="stylesheet" href="css/animations.css"/>
+<style>
+.food-picker{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:var(--sp-3);}
+.food-pick-btn{border:1.5px solid var(--border);border-radius:var(--r-lg);padding:var(--sp-4);cursor:pointer;transition:all var(--t-fast);text-align:center;background:var(--bg-card);}
+.food-pick-btn:hover{border-color:var(--primary);}
+.food-pick-btn.selected{border-color:var(--primary);background:rgba(255,107,53,.1);}
+.food-pick-btn .food-em{font-size:2.2rem;margin-bottom:var(--sp-2);}
+.food-pick-btn .food-nm{font-size:.78rem;font-weight:600;}
+.ingr-row{display:flex;align-items:center;gap:var(--sp-4);padding:var(--sp-4);border-bottom:1px solid var(--border);}
+.ingr-row:last-child{border-bottom:none;}
+.ingr-info{flex:1;}
+.ingr-name{font-weight:600;font-size:.9rem;}
+.ingr-type{font-size:.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;}
+.ingr-slider-wrap{width:160px;}
+.ingr-qty{font-size:.82rem;color:var(--primary);font-weight:700;min-width:48px;text-align:right;}
+.ingr-health-badge{font-size:.7rem;}
+.impact-meter{height:6px;background:rgba(255,255,255,.08);border-radius:var(--r-full);overflow:hidden;width:60px;}
+.impact-fill{height:100%;border-radius:var(--r-full);background:var(--grad-health);}
+.alt-chip{display:inline-flex;align-items:center;gap:var(--sp-2);padding:6px 14px;border:1.5px solid var(--border-health);border-radius:var(--r-full);font-size:.78rem;font-weight:600;color:var(--accent);cursor:pointer;transition:all var(--t-fast);background:rgba(46,204,113,.06);}
+.alt-chip:hover{background:rgba(46,204,113,.15);}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand"><span class="nav-logo-text">Khaana Peena</span><span class="nav-logo-dot"></span></a>
+    <div class="nav-links">
+      <a href="dashboard.html" class="nav-link">Dashboard</a>
+      <a href="meal-planner.html" class="nav-link">Meal Planner</a>
+      <a href="customize.html" class="nav-link active">Customize</a>
+    </div>
+    <div class="nav-actions" id="nav-user-area"></div>
+  </div>
+</nav>
+
+<div class="app-layout" style="padding-top:var(--nav-h);">
+  <aside class="sidebar">
+    <div id="sidebar-profile" style="margin-bottom:var(--sp-6);"></div>
+    <div class="sidebar-section">
+      <span class="sidebar-label">Main</span>
+      <a href="dashboard.html" class="sidebar-link"><span class="icon">🏠</span> Dashboard</a>
+      <a href="meal-planner.html" class="sidebar-link"><span class="icon">🍽️</span> Meal Planner</a>
+      <a href="chai-studio.html" class="sidebar-link"><span class="icon">☕</span> Chai Studio</a>
+      <a href="customize.html" class="sidebar-link active"><span class="icon">🎛️</span> Customize Food</a>
+    </div>
+    <div class="sidebar-section">
+      <span class="sidebar-label">Planning</span>
+      <a href="diet-plan.html" class="sidebar-link"><span class="icon">📋</span> Diet Plan</a>
+      <a href="gym-plan.html" class="sidebar-link"><span class="icon">🏋️</span> Gym Plan</a>
+      <a href="order.html" class="sidebar-link"><span class="icon">📦</span> Order</a>
+    </div>
+    <div class="sidebar-section">
+      <a href="profile.html" class="sidebar-link"><span class="icon">👤</span> My Profile</a>
+      <a href="#" class="sidebar-link" onclick="KP.logout()"><span class="icon">🚪</span> Logout</a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header anim-slide-down">
+      <h1 style="font-size:1.8rem;">🎛️ Customize Your Food</h1>
+      <p style="margin-top:4px;">Ingredient-level control — make every meal exactly right for your health</p>
+    </div>
+
+    <!-- FOOD SELECTOR -->
+    <div class="glass-card anim-fade-in" style="margin-bottom:var(--sp-6);">
+      <div class="flex justify-between items-center" style="margin-bottom:var(--sp-4);">
+        <h4>Step 1: Choose a Meal</h4>
+        <div class="flex gap-2">
+          <button class="filter-chip active" onclick="setFoodFilter('all',this)" style="padding:6px 14px;">All</button>
+          <button class="filter-chip" onclick="setFoodFilter('breakfast',this)" style="padding:6px 14px;">Breakfast</button>
+          <button class="filter-chip" onclick="setFoodFilter('lunch',this)" style="padding:6px 14px;">Lunch</button>
+          <button class="filter-chip" onclick="setFoodFilter('dinner',this)" style="padding:6px 14px;">Dinner</button>
+        </div>
+      </div>
+      <div class="food-picker" id="food-picker"></div>
+    </div>
+
+    <!-- CUSTOMIZATION PANEL -->
+    <div id="customize-panel" style="display:none;">
+      <div class="grid grid-2" style="align-items:start;gap:var(--sp-6);">
+
+        <!-- INGREDIENTS -->
+        <div>
+          <div class="glass-card" style="margin-bottom:var(--sp-5);">
+            <div class="flex justify-between items-center" style="margin-bottom:var(--sp-5);">
+              <h4 id="food-name-header">Ingredients</h4>
+              <button class="btn btn-ghost btn-sm" onclick="resetIngredients()">↺ Reset</button>
+            </div>
+            <div id="ingredients-list"></div>
+          </div>
+
+          <!-- HEALTHY SWAPS -->
+          <div class="glass-card" style="margin-bottom:var(--sp-5);">
+            <h5 style="margin-bottom:var(--sp-4);">🔄 Healthy Swaps</h5>
+            <div id="healthy-swaps" style="display:flex;flex-direction:column;gap:var(--sp-3);"></div>
+          </div>
+        </div>
+
+        <!-- NUTRITION + HEALTH PANEL -->
+        <div>
+          <!-- NUTRITION -->
+          <div class="glass-card" style="margin-bottom:var(--sp-5);">
+            <h5 style="margin-bottom:var(--sp-5);">📊 Nutrition (Customized)</h5>
+            <div class="nutrition-grid" id="live-nutrition">
+              <div class="nutrition-item"><div class="nutrition-val grad-text" id="nc-cal">--</div><div class="nutrition-label">Calories</div></div>
+              <div class="nutrition-item"><div class="nutrition-val" style="color:var(--accent);" id="nc-prot">--g</div><div class="nutrition-label">Protein</div></div>
+              <div class="nutrition-item"><div class="nutrition-val" style="color:var(--warning);" id="nc-carb">--g</div><div class="nutrition-label">Carbs</div></div>
+              <div class="nutrition-item"><div class="nutrition-val" style="color:var(--info);" id="nc-fat">--g</div><div class="nutrition-label">Fat</div></div>
+            </div>
+            <div style="margin-top:var(--sp-4);">
+              <div class="macro-bars">
+                <div class="macro-row">
+                  <div class="macro-label"><span class="macro-name">Protein</span><span class="macro-num" id="prot-pct">0%</span></div>
+                  <div class="progress-bar"><div class="progress-fill health" id="prot-bar" style="width:0%;"></div></div>
+                </div>
+                <div class="macro-row">
+                  <div class="macro-label"><span class="macro-name">Carbs</span><span class="macro-num" id="carb-pct">0%</span></div>
+                  <div class="progress-bar"><div class="progress-fill warning" id="carb-bar" style="width:0%;"></div></div>
+                </div>
+                <div class="macro-row">
+                  <div class="macro-label"><span class="macro-name">Fats</span><span class="macro-num" id="fat-pct">0%</span></div>
+                  <div class="progress-bar"><div class="progress-fill" id="fat-bar" style="width:0%;background:var(--info);"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- HEALTH ANALYSIS -->
+          <div class="glass-card" style="margin-bottom:var(--sp-5);">
+            <h5 style="margin-bottom:var(--sp-4);">💚 Health Analysis</h5>
+            <div id="health-check-result" style="display:flex;flex-direction:column;gap:var(--sp-2);"></div>
+          </div>
+
+          <!-- ORDER ACTIONS -->
+          <div class="flex flex-col gap-3">
+            <button class="btn btn-primary btn-full btn-lg ripple-btn" onclick="orderCustomized()">📦 Order This Customized Meal</button>
+            <button class="btn btn-secondary btn-full" onclick="saveToDietPlan()">📋 Save to Diet Plan</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+<script src="js/app.js"></script>
+<script src="js/meal-data.js"></script>
+<script src="js/health-engine.js"></script>
+<script>
+let profile = {}, selectedFood = null, ingredientMultipliers = {};
+const filterChips = document.querySelectorAll('.filter-chip');
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (!KP.requireAuth()) return;
+  profile = KP.getProfile() || {};
+  renderFoodPicker('all');
+
+  // Pre-select from URL param
+  const params = new URLSearchParams(window.location.search);
+  const foodId = params.get('food');
+  if (foodId) setTimeout(() => { const food = ALL_FOODS.find(f=>f.id===foodId); if(food) selectFood(food); }, 300);
+});
+
+function setFoodFilter(cat, btn) {
+  filterChips.forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  renderFoodPicker(cat);
+}
+
+function renderFoodPicker(cat) {
+  const foods = cat === 'all' ? ALL_FOODS.filter(f=>['breakfast','lunch','dinner'].includes(f.category||cat)) : (MEAL_DATA[cat]||[]);
+  const picker = document.getElementById('food-picker');
+  picker.innerHTML = foods.map(f => `
+    <div class="food-pick-btn ${selectedFood?.id===f.id?'selected':''}" onclick="selectFood(${JSON.stringify(f).replace(/"/g,"'")})">
+      <div class="food-em">${f.emoji}</div>
+      <div class="food-nm">${f.name}</div>
+    </div>`).join('');
+}
+
+function selectFood(food) {
+  selectedFood = food;
+  ingredientMultipliers = {};
+  document.querySelectorAll('.food-pick-btn').forEach(b => b.classList.remove('selected'));
+  const btns = document.querySelectorAll('.food-pick-btn');
+  btns.forEach(b => { if(b.querySelector('.food-nm')?.textContent === food.name) b.classList.add('selected'); });
+
+  document.getElementById('customize-panel').style.display = 'block';
+  document.getElementById('food-name-header').textContent = `${food.emoji} ${food.name} — Ingredients`;
+  document.getElementById('customize-panel').scrollIntoView({behavior:'smooth',block:'start'});
+
+  renderIngredients(food);
+  updateNutrition(food);
+  renderHealthCheck(food, []);
+  renderSwaps(food);
+}
+
+function renderIngredients(food) {
+  const list = document.getElementById('ingredients-list');
+  if (!food.ingredients?.length) {
+    list.innerHTML = '<p style="color:var(--text-muted);font-size:.85rem;">Ingredient info not available for this item.</p>';
+    return;
+  }
+  list.innerHTML = food.ingredients.map((ing, idx) => {
+    const typeColors = {protein:'var(--accent)',fat:'var(--warning)',carb:'var(--primary)',spice:'var(--danger)',sweet:'var(--warning)',veg:'var(--info)',herb:'var(--accent)',fruit:'var(--primary)'};
+    const color = typeColors[ing.type] || 'var(--text-muted)';
+    return `
+    <div class="ingr-row">
+      <div class="ingr-info">
+        <div class="ingr-name">${ing.name}</div>
+        <div class="ingr-type" style="color:${color};">${ing.type||'ingredient'}</div>
+      </div>
+      ${ing.adjustable ? `
+      <div class="ingr-slider-wrap">
+        <div class="slider-row">
+          <input type="range" min="0" max="2" step="0.1" value="1" style="width:120px;"
+            oninput="adjustIngredient(${idx},this.value,'${ing.type}')"/>
+          <span class="ingr-qty" id="ingr-qty-${idx}" style="color:${color};">1x</span>
+        </div>
+      </div>` : `<span class="badge badge-blue">Fixed</span>`}
+    </div>`;
+  }).join('');
+}
+
+function adjustIngredient(idx, val, type) {
+  ingredientMultipliers[idx] = parseFloat(val);
+  document.getElementById('ingr-qty-'+idx).textContent = parseFloat(val).toFixed(1) + 'x';
+  updateNutrition(selectedFood);
+
+  const healthWarnings = [];
+  const conditions = profile.conditions||[];
+  if (type==='sweet' && val>1 && conditions.includes('diabetes')) healthWarnings.push({ type:'warn', msg:'Adding more sweetener with diabetes — watch blood sugar.' });
+  if (type==='fat' && val>1.5 && conditions.includes('weight-loss')) healthWarnings.push({ type:'warn', msg:'Increasing fat — adds calories to weight-loss plan.' });
+  if (type==='mineral' && val>1.2 && conditions.includes('hypertension')) healthWarnings.push({ type:'warn', msg:'More salt — avoid with hypertension.' });
+
+  renderHealthCheck(selectedFood, healthWarnings);
+}
+
+function updateNutrition(food) {
+  let cal=food.calories, prot=food.protein||0, carb=food.carbs||0, fat=food.fat||0;
+  food.ingredients?.forEach((ing, idx) => {
+    const m = ingredientMultipliers[idx] ?? 1;
+    const diff = m - 1;
+    if (ing.type==='fat') fat = Math.max(0, fat+diff*3);
+    if (ing.type==='carb'||ing.type==='sweet') { carb=Math.max(0,carb+diff*10); cal=Math.max(50,cal+diff*40); }
+    if (ing.type==='protein') prot=Math.max(0,prot+diff*5);
+    if (m===0) cal=Math.max(10,cal-20);
+  });
+  const total = prot*4 + carb*4 + fat*9 || 1;
+  document.getElementById('nc-cal').textContent  = Math.round(cal);
+  document.getElementById('nc-prot').textContent = Math.round(prot)+'g';
+  document.getElementById('nc-carb').textContent = Math.round(carb)+'g';
+  document.getElementById('nc-fat').textContent  = Math.round(fat)+'g';
+  document.getElementById('prot-bar').style.width = Math.min(100,(prot*4/total)*100)+'%';
+  document.getElementById('carb-bar').style.width = Math.min(100,(carb*4/total)*100)+'%';
+  document.getElementById('fat-bar').style.width  = Math.min(100,(fat*9/total)*100)+'%';
+  document.getElementById('prot-pct').textContent = Math.round((prot*4/total)*100)+'%';
+  document.getElementById('carb-pct').textContent = Math.round((carb*4/total)*100)+'%';
+  document.getElementById('fat-pct').textContent  = Math.round((fat*9/total)*100)+'%';
+}
+
+function renderHealthCheck(food, extra=[]) {
+  const scored = HealthEngine.scoreFood(food, profile);
+  const all    = [...(typeof scored==='object'?scored.warnings:[]), ...extra, ...(typeof scored==='object'?scored.positives.slice(0,2).map(p=>({type:'safe',msg:p})):[])];
+  const el     = document.getElementById('health-check-result');
+  if (!all.length) { el.innerHTML='<div class="health-alert safe"><span class="alert-icon">💚</span>All good! This meal is well-suited to your health profile.</div>'; return; }
+  el.innerHTML = all.map(w=>`<div class="health-alert ${w.type==='safe'?'safe':w.type==='danger'?'danger':'warn'}"><span class="alert-icon">${w.type==='safe'?'✅':w.type==='danger'?'⛔':'⚠️'}</span>${w.msg||w}</div>`).join('');
+}
+
+function renderSwaps(food) {
+  const swaps = document.getElementById('healthy-swaps');
+  const healthyAlts = {
+    'white rice':   { alt:'Brown Rice',    reason:'Higher fiber, lower GI', badge:'badge-green' },
+    'sugar':        { alt:'Jaggery / Stevia', reason:'Natural sweetener', badge:'badge-green' },
+    'oil':          { alt:'Olive/Coconut Oil', reason:'Healthier fat profile', badge:'badge-green' },
+    'maida':        { alt:'Whole Wheat Atta', reason:'More fiber', badge:'badge-green' },
+    'cream':        { alt:'Low-fat Yogurt', reason:'Less saturated fat', badge:'badge-blue' },
+    'regular milk': { alt:'Oat / Almond Milk', reason:'Lactose-free option', badge:'badge-blue' }
+  };
+  const matches = food.ingredients?.filter(ing => Object.keys(healthyAlts).some(k => ing.name.toLowerCase().includes(k))) || [];
+  if (!matches.length) { swaps.innerHTML='<p style="font-size:.82rem;color:var(--text-muted);">No obvious swaps needed — great meal choice!</p>'; return; }
+  swaps.innerHTML = matches.slice(0,4).map(ing => {
+    const key   = Object.keys(healthyAlts).find(k => ing.name.toLowerCase().includes(k));
+    const swap  = healthyAlts[key];
+    return `<div class="flex items-center gap-3 justify-between" style="padding:var(--sp-2) 0;border-bottom:1px solid var(--border);">
+      <div><div style="font-size:.85rem;font-weight:600;">${ing.name}</div><div style="font-size:.75rem;color:var(--text-muted);">${swap.reason}</div></div>
+      <div class="alt-chip" onclick="KP.toast('✅ Swap noted!','success')">→ ${swap.alt}</div>
+    </div>`;
+  }).join('');
+}
+
+function resetIngredients() {
+  ingredientMultipliers = {};
+  document.querySelectorAll('.ingr-slider-wrap input').forEach(s => { s.value=1; });
+  document.querySelectorAll('[id^="ingr-qty-"]').forEach(el => { el.textContent='1x'; });
+  updateNutrition(selectedFood);
+  renderHealthCheck(selectedFood, []);
+  KP.toast('Reset to default quantities','info');
+}
+
+function orderCustomized() {
+  if (!selectedFood) { KP.toast('Select a food first','warning'); return; }
+  const cart = KP.load('cart', []);
+  cart.push({ ...selectedFood, customizations: Object.entries(ingredientMultipliers).map(([i,v])=>({ingredient:selectedFood.ingredients[i]?.name,multiplier:v})), addedAt:new Date().toISOString() });
+  KP.save('cart', cart);
+  KP.toast(`✅ Customized ${selectedFood.name} added to order!`,'success');
+  setTimeout(()=>window.location.href='order.html',800);
+}
+
+function saveToDietPlan() {
+  KP.toast('📋 Saved to diet plan!','success');
+}
+</script>
+<div style="text-align: center; padding: 15px; font-weight: bold; background: var(--bg-secondary); color: var(--text-primary); border-top: 1px solid var(--border); width: 100%; position: relative; z-index: 1000; font-size: 1.1rem; letter-spacing: 0.5px;">
+  Made with ❤️ by Avii
+</div>
+</body>
+</html>

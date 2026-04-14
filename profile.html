@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>My Health Profile — Khaana Peena</title>
+<link rel="stylesheet" href="css/style.css"/>
+<link rel="stylesheet" href="css/components.css"/>
+<link rel="stylesheet" href="css/animations.css"/>
+<style>
+.profile-hero{background:var(--grad-warm);border:1px solid var(--border-warm);border-radius:var(--r-2xl);padding:var(--sp-8);margin-bottom:var(--sp-6);display:flex;align-items:center;gap:var(--sp-6);flex-wrap:wrap;}
+.big-avatar{width:90px;height:90px;border-radius:50%;background:var(--grad-primary);display:flex;align-items:center;justify-content:center;font-size:2.4rem;font-weight:700;color:white;border:3px solid rgba(255,107,53,.4);box-shadow:var(--shadow-glow);flex-shrink:0;}
+.profile-stat-row{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--sp-3);}
+.profile-stat{background:var(--bg-card-2);border:1px solid var(--border);border-radius:var(--r-md);padding:var(--sp-4);display:flex;align-items:center;gap:var(--sp-3);}
+.profile-stat-icon{font-size:1.5rem;}
+.profile-stat-val{font-weight:800;font-size:1.2rem;font-family:var(--font-heading);}
+.profile-stat-label{font-size:.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;}
+.condition-badge{display:flex;align-items:center;gap:var(--sp-3);padding:var(--sp-4);border:1px solid var(--border);border-radius:var(--r-lg);background:var(--bg-card-2);transition:all var(--t-fast);}
+.condition-badge:hover{border-color:var(--border-warm);}
+.bmi-meter{position:relative;height:16px;background:linear-gradient(90deg,#3498DB 0%,#2ECC71 25%,#2ECC71 50%,#F39C12 65%,#E74C3C 80%,#C0392B 100%);border-radius:var(--r-full);overflow:visible;}
+.bmi-marker{position:absolute;top:-4px;width:24px;height:24px;border-radius:50%;background:white;border:3px solid var(--bg-primary);box-shadow:var(--shadow-md);transition:left var(--t-slow);}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand"><span class="nav-logo-text">Khaana Peena</span><span class="nav-logo-dot"></span></a>
+    <div class="nav-links">
+      <a href="dashboard.html" class="nav-link">Dashboard</a>
+      <a href="profile.html" class="nav-link active">My Profile</a>
+    </div>
+    <div class="nav-actions" id="nav-user-area"></div>
+  </div>
+</nav>
+
+<div class="app-layout" style="padding-top:var(--nav-h);">
+  <aside class="sidebar">
+    <div id="sidebar-profile" style="margin-bottom:var(--sp-6);"></div>
+    <div class="sidebar-section">
+      <span class="sidebar-label">Main</span>
+      <a href="dashboard.html" class="sidebar-link"><span class="icon">🏠</span> Dashboard</a>
+      <a href="meal-planner.html" class="sidebar-link"><span class="icon">🍽️</span> Meal Planner</a>
+      <a href="chai-studio.html" class="sidebar-link"><span class="icon">☕</span> Chai Studio</a>
+    </div>
+    <div class="sidebar-section">
+      <span class="sidebar-label">Planning</span>
+      <a href="diet-plan.html" class="sidebar-link"><span class="icon">📋</span> Diet Plan</a>
+      <a href="gym-plan.html" class="sidebar-link"><span class="icon">🏋️</span> Gym Plan</a>
+    </div>
+    <div class="sidebar-section">
+      <a href="profile.html" class="sidebar-link active"><span class="icon">👤</span> My Profile</a>
+      <a href="#" class="sidebar-link" onclick="KP.logout()"><span class="icon">🚪</span> Logout</a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+
+    <!-- PROFILE HERO -->
+    <div class="profile-hero anim-scale-in" id="profile-hero">
+      <div class="big-avatar" id="profile-avatar">U</div>
+      <div style="flex:1;">
+        <div style="font-size:.78rem;color:var(--primary);text-transform:uppercase;letter-spacing:.1em;margin-bottom:var(--sp-1);">Health Profile</div>
+        <h2 id="profile-name" style="margin-bottom:var(--sp-2);">Loading...</h2>
+        <p id="profile-tagline" style="font-size:.9rem;margin-bottom:var(--sp-4);">Your personalized health companion</p>
+        <div id="profile-badges" class="flex gap-2 flex-wrap"></div>
+      </div>
+      <div>
+        <a href="onboarding.html" class="btn btn-secondary btn-sm">✏️ Edit Profile</a>
+      </div>
+    </div>
+
+    <div class="grid grid-2" style="gap:var(--sp-6);">
+
+      <!-- LEFT PANEL -->
+      <div>
+        <!-- BODY STATS -->
+        <div class="glass-card" style="margin-bottom:var(--sp-5);">
+          <h5 style="margin-bottom:var(--sp-5);">📊 Body Statistics</h5>
+          <div class="profile-stat-row" id="body-stats"></div>
+
+          <!-- BMI -->
+          <div style="margin-top:var(--sp-6);">
+            <div class="flex justify-between items-center" style="margin-bottom:var(--sp-3);">
+              <span style="font-weight:700;">BMI</span>
+              <span id="bmi-value" style="font-size:1.3rem;font-weight:800;font-family:var(--font-heading);" class="grad-text">--</span>
+            </div>
+            <div class="bmi-meter">
+              <div class="bmi-marker" id="bmi-marker" style="left:20%;"></div>
+            </div>
+            <div class="flex justify-between" style="font-size:.7rem;color:var(--text-muted);margin-top:var(--sp-3);">
+              <span>Underweight</span><span>Normal</span><span style="margin-left:var(--sp-3);">Overweight</span><span>Obese</span>
+            </div>
+            <div style="text-align:center;margin-top:var(--sp-3);">
+              <span class="badge" id="bmi-badge">Loading...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CALORIE TARGETS -->
+        <div class="glass-card">
+          <h5 style="margin-bottom:var(--sp-5);">🎯 Daily Nutrition Targets</h5>
+          <div style="display:flex;flex-direction:column;gap:var(--sp-4);" id="nutrition-targets"></div>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL -->
+      <div>
+        <!-- HEALTH CONDITIONS -->
+        <div class="glass-card" style="margin-bottom:var(--sp-5);">
+          <div class="flex justify-between items-center" style="margin-bottom:var(--sp-5);">
+            <h5>🏥 Health Conditions</h5>
+            <a href="onboarding.html" class="btn btn-ghost btn-sm">Edit</a>
+          </div>
+          <div id="conditions-section" style="display:flex;flex-direction:column;gap:var(--sp-3);"></div>
+        </div>
+
+        <!-- PREFERENCES -->
+        <div class="glass-card" style="margin-bottom:var(--sp-5);">
+          <h5 style="margin-bottom:var(--sp-5);">🍽️ Food Preferences</h5>
+          <div id="preferences-section" style="display:flex;flex-direction:column;gap:var(--sp-3);font-size:.88rem;"></div>
+        </div>
+
+        <!-- HEALTH INSIGHTS -->
+        <div class="glass-card">
+          <h5 style="margin-bottom:var(--sp-4);">💡 Personalized Insights</h5>
+          <div id="insights-section" style="display:flex;flex-direction:column;gap:var(--sp-3);"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ACHIEVEMENTS -->
+    <div style="margin-top:var(--sp-8);">
+      <h4 style="margin-bottom:var(--sp-5);">🏅 Health Badges</h4>
+      <div class="grid grid-auto-sm" id="achievements-grid"></div>
+    </div>
+
+  </main>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+<script src="js/app.js"></script>
+<script src="js/meal-data.js"></script>
+<script src="js/health-engine.js"></script>
+<script src="js/beverage-engine.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  if (!KP.requireAuth()) return;
+  const user    = KP.getUser();
+  const profile = KP.getProfile() || {};
+
+  // HERO
+  document.getElementById('profile-avatar').textContent = user.name?.[0]?.toUpperCase() || 'U';
+  document.getElementById('profile-name').textContent = user.name || 'Health Conscious User';
+  document.getElementById('profile-tagline').textContent = `Member since ${new Date(user.id?.split('_')[1]||Date.now()).toLocaleDateString('en-IN',{month:'long',year:'numeric'})} · ${profile.conditions?.join(', ')||'General Health'}`;
+
+  // Badges
+  const condIcons = { diabetes:'🩸', hypertension:'❤️', thyroid:'🦋', 'weight-loss':'⚖️', gym:'🏋️', lactoseIntolerant:'🥛', glutenFree:'🌾', pregnancy:'🤰', general:'✅' };
+  const badgeEl = document.getElementById('profile-badges');
+  (profile.conditions||['general']).forEach(c => {
+    const span = document.createElement('span');
+    span.className = 'badge badge-primary';
+    span.textContent = `${condIcons[c]||'•'} ${c.replace(/-/g,' ').replace(/\b\w/g,l=>l.toUpperCase())}`;
+    badgeEl.appendChild(span);
+  });
+
+  // BODY STATS
+  const bmi = profile.weight && profile.height ? (parseFloat(profile.weight) / ((parseFloat(profile.height)/100)**2)).toFixed(1) : '--';
+  const statsEl = document.getElementById('body-stats');
+  const stats = [
+    { icon:'⚖️', val:profile.weight?profile.weight+' kg':'--', label:'Weight' },
+    { icon:'📏', val:profile.height?profile.height+' cm':'--', label:'Height' },
+    { icon:'🎂', val:profile.age?profile.age+' yrs':'--', label:'Age' },
+    { icon:profile.gender==='female'?'👩':'👨', val:profile.gender||'--', label:'Gender' }
+  ];
+  statsEl.innerHTML = stats.map(s=>`<div class="profile-stat"><div class="profile-stat-icon">${s.icon}</div><div><div class="profile-stat-val">${s.val}</div><div class="profile-stat-label">${s.label}</div></div></div>`).join('');
+
+  // BMI
+  if (bmi !== '--') {
+    const bmiNum = parseFloat(bmi);
+    document.getElementById('bmi-value').textContent = bmi;
+    let pct, label, cls;
+    if (bmiNum < 18.5) { pct=8; label='Underweight'; cls='badge-blue'; }
+    else if (bmiNum < 25) { pct=35; label='Normal Weight ✅'; cls='badge-green'; }
+    else if (bmiNum < 30) { pct=62; label='Overweight'; cls='badge-yellow'; }
+    else { pct=85; label='Obese'; cls='badge-red'; }
+    setTimeout(() => document.getElementById('bmi-marker').style.left = pct+'%', 500);
+    document.getElementById('bmi-badge').className = `badge ${cls}`;
+    document.getElementById('bmi-badge').textContent = label;
+  }
+
+  // NUTRITION TARGETS
+  const targets = HealthEngine.getMacroTargets(profile);
+  const macros = [
+    { name:'Calories', val:targets.calories, unit:'kcal', color:'var(--primary)', icon:'🔥', pct:100 },
+    { name:'Protein',  val:targets.protein,  unit:'g',    color:'var(--accent)',  icon:'💪', pct:Math.round((targets.protein*4/targets.calories)*100) },
+    { name:'Carbs',    val:targets.carbs,    unit:'g',    color:'var(--warning)', icon:'🫙', pct:Math.round((targets.carbs*4/targets.calories)*100) },
+    { name:'Fat',      val:targets.fat,      unit:'g',    color:'var(--info)',    icon:'🥑', pct:Math.round((targets.fat*9/targets.calories)*100) },
+    { name:'Fiber',    val:targets.fiber,    unit:'g',    color:'#9B59B6',        icon:'🌾', pct:100 }
+  ];
+  document.getElementById('nutrition-targets').innerHTML = macros.map(m=>`
+    <div>
+      <div class="flex justify-between" style="margin-bottom:var(--sp-1);">
+        <span style="font-size:.85rem;font-weight:600;">${m.icon} ${m.name}</span>
+        <span style="font-weight:700;color:${m.color};">${m.val} ${m.unit}</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${m.pct}%;background:${m.color};transition:width 1s ease .3s;"></div></div>
+    </div>`).join('');
+
+  // CONDITIONS
+  const condMeta = HEALTH_CONDITIONS;
+  const condEl = document.getElementById('conditions-section');
+  if (!profile.conditions?.length || profile.conditions.includes('general')) {
+    condEl.innerHTML = '<div class="health-alert safe"><span class="alert-icon">✅</span>General health — no specific condition restrictions.</div>';
+  } else {
+    condEl.innerHTML = profile.conditions.map(c => {
+      const meta = condMeta[c];
+      return `<div class="condition-badge">
+        <span style="font-size:1.6rem;">${meta?.icon||'•'}</span>
+        <div><div style="font-weight:700;font-size:.9rem;">${meta?.label||c}</div>
+        <div style="font-size:.75rem;color:var(--text-muted);">Meals optimized for this condition</div></div>
+        <span class="badge badge-green" style="margin-left:auto;">Active</span>
+      </div>`;
+    }).join('');
+  }
+
+  // PREFERENCES
+  const prefEl = document.getElementById('preferences-section');
+  const prefRows = [
+    { label:'Diet Type',       val: profile.dietType || 'Not set',          icon:'🥗' },
+    { label:'Spice Tolerance', val: profile.spiceTolerance || 'Not set',    icon:'🌶️' },
+    { label:'Activity Level',  val: profile.activityLevel || 'Moderate',   icon:'🏃' },
+    { label:'Water Goal',      val: (profile.waterGoal||8)+' glasses/day',  icon:'💧' },
+    { label:'Gym Days',        val: profile.gymDays?.join(', ') || 'None set', icon:'🏋️' }
+  ];
+  prefEl.innerHTML = prefRows.map(r=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:var(--sp-2) 0;border-bottom:1px solid var(--border);">
+    <span style="color:var(--text-muted);">${r.icon} ${r.label}</span>
+    <span style="font-weight:600;">${r.val}</span>
+  </div>`).join('');
+
+  // INSIGHTS
+  const insEl = document.getElementById('insights-section');
+  const insights = [
+    KP.getTip(profile),
+    { tip: `Your BMI is ${bmi}. ${parseFloat(bmi)<18.5?'Adding more calorie-dense, nutritious foods will help.':parseFloat(bmi)<25?'You are in the healthy BMI range. Keep it up!':'A calorie-conscious approach with exercise is recommended.'}`, icon:'📊' },
+    { tip: `Protein target: ${targets.protein}g/day. ${profile.conditions?.includes('gym')?'Prioritize high-protein post-workout meals.':'Spread protein evenly across meals for best absorption.'}`, icon:'💪' }
+  ];
+  insEl.innerHTML = insights.map(i=>`<div class="health-alert safe" style="padding:var(--sp-3) var(--sp-4);"><span class="alert-icon">${i.icon}</span>${i.tip}</div>`).join('');
+
+  // ACHIEVEMENTS
+  const achs = [
+    { icon:'🥇', title:'Profile Complete', desc:'Set up full health profile', done:!!profile.weight },
+    { icon:'☕', title:'Chai Master',       desc:'Created a chai preset',      done:BeverageEngine ? BeverageEngine.getPresets('masala-chai').length>0 : false },
+    { icon:'📋', title:'Diet Devotee',      desc:'Set weekly diet plan',       done:!!KP.load('diet_plan',null) },
+    { icon:'🏋️', title:'Gym Planner',       desc:'Saved gym schedule',         done:!!KP.load('gym_schedule',null) },
+    { icon:'💧', title:'Hydration Hero',    desc:'Reached water goal',         done: KP.load('water_today',{total:0}).total >= (profile.waterGoal||8) },
+    { icon:'🌟', title:'Health Conscious',  desc:'Using platform for 7 days',  done:false }
+  ];
+  document.getElementById('achievements-grid').innerHTML = achs.map(a=>`
+    <div class="glass-card hover-lift" style="text-align:center;padding:var(--sp-5);${!a.done?'opacity:.4;filter:grayscale(1);':''}">
+      <div style="font-size:2.4rem;margin-bottom:var(--sp-3);">${a.icon}</div>
+      <div style="font-weight:700;font-size:.9rem;margin-bottom:var(--sp-1);">${a.title}</div>
+      <div style="font-size:.78rem;color:var(--text-muted);">${a.desc}</div>
+      <div style="margin-top:var(--sp-3);">${a.done?'<span class="badge badge-green">✅ Earned</span>':'<span class="badge">🔒 Locked</span>'}</div>
+    </div>`).join('');
+});
+</script>
+<div style="text-align: center; padding: 15px; font-weight: bold; background: var(--bg-secondary); color: var(--text-primary); border-top: 1px solid var(--border); width: 100%; position: relative; z-index: 1000; font-size: 1.1rem; letter-spacing: 0.5px;">
+  Made with ❤️ by Avii
+</div>
+</body>
+</html>

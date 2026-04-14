@@ -1,0 +1,107 @@
+/* =========================================
+   KHAANA PEENA — Animations
+   ========================================= */
+
+/* ===== KEYFRAMES ===== */
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.15);opacity:.7;}}
+@keyframes spin{to{transform:rotate(360deg);}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes fadeOut{from{opacity:1;}to{opacity:0;pointer-events:none;}}
+@keyframes slideInRight{from{transform:translateX(60px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+@keyframes slideInUp{from{transform:translateY(30px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+@keyframes slideInDown{from{transform:translateY(-20px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+@keyframes scaleIn{from{transform:scale(.9);opacity:0;}to{transform:scale(1);opacity:1;}}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
+@keyframes floatSlow{0%,100%{transform:translateY(0) rotate(0deg);}33%{transform:translateY(-18px) rotate(3deg);}66%{transform:translateY(-8px) rotate(-2deg);}}
+@keyframes shimmer{0%{background-position:-200% 0;}100%{background-position:200% 0;}}
+@keyframes glow{0%,100%{box-shadow:0 0 20px rgba(255,107,53,.2);}50%{box-shadow:0 0 40px rgba(255,107,53,.5);}}
+@keyframes glowHealth{0%,100%{box-shadow:0 0 20px rgba(46,204,113,.2);}50%{box-shadow:0 0 40px rgba(46,204,113,.5);}}
+@keyframes rainDrop{0%{transform:translateY(-60px) rotate(15deg);opacity:0;}10%{opacity:1;}90%{opacity:.7;}100%{transform:translateY(110vh) rotate(20deg);opacity:0;}}
+@keyframes typewriter{from{width:0;}to{width:100%;}}
+@keyframes blinkCaret{50%{border-color:transparent;}}
+@keyframes gradientShift{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+@keyframes slideProgress{from{width:0;}to{width:var(--target-w,100%);}}
+@keyframes bounceIn{0%{transform:scale(.3);opacity:0;}50%{transform:scale(1.05);}70%{transform:scale(.9);}100%{transform:scale(1);opacity:1;}}
+@keyframes ripple{0%{transform:scale(0);opacity:.6;}100%{transform:scale(4);opacity:0;}}
+@keyframes waveFood{0%,100%{transform:rotate(-5deg) scale(1);}25%{transform:rotate(5deg) scale(1.05);}50%{transform:rotate(-3deg) scale(1.02);}75%{transform:rotate(4deg) scale(1.04);}}
+@keyframes countUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+@keyframes chaiPour{0%{height:0;opacity:0;}100%{height:100%;opacity:1;}}
+@keyframes steam{0%{opacity:.4;transform:translateY(0) scaleX(1);}100%{opacity:0;transform:translateY(-40px) scaleX(1.5);}}
+
+/* ===== ANIMATION CLASSES ===== */
+.anim-fade-in{animation:fadeIn var(--t-normal) ease both;}
+.anim-slide-up{animation:slideInUp .5s ease both;}
+.anim-slide-down{animation:slideInDown .4s ease both;}
+.anim-scale-in{animation:scaleIn .4s ease both;}
+.anim-bounce-in{animation:bounceIn .6s cubic-bezier(.68,-.55,.27,1.55) both;}
+.anim-float{animation:float 4s ease-in-out infinite;}
+.anim-float-slow{animation:floatSlow 6s ease-in-out infinite;}
+.anim-glow{animation:glow 2.5s ease-in-out infinite;}
+.anim-glow-health{animation:glowHealth 2.5s ease-in-out infinite;}
+.anim-shimmer{background:linear-gradient(90deg,rgba(255,255,255,.02) 25%,rgba(255,255,255,.07) 50%,rgba(255,255,255,.02) 75%);background-size:200% 100%;animation:shimmer 2s infinite;}
+.anim-pulse{animation:pulse 2s ease-in-out infinite;}
+.anim-gradient{background-size:200% 200%;animation:gradientShift 4s ease infinite;}
+
+/* STAGGER DELAYS */
+.delay-1{animation-delay:.1s;}
+.delay-2{animation-delay:.2s;}
+.delay-3{animation-delay:.3s;}
+.delay-4{animation-delay:.4s;}
+.delay-5{animation-delay:.5s;}
+.delay-6{animation-delay:.6s;}
+.delay-7{animation-delay:.7s;}
+.delay-8{animation-delay:.8s;}
+
+/* ===== HERO FOOD RAIN ===== */
+.food-rain{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0;}
+.food-drop{position:absolute;font-size:1.6rem;animation:rainDrop linear infinite;opacity:0;user-select:none;}
+
+/* ===== CHAI STEAM ===== */
+.steam-wrap{position:relative;display:flex;justify-content:center;gap:12px;height:50px;}
+.steam-line{width:4px;border-radius:4px;background:rgba(255,255,255,.25);animation:steam 1.8s ease-out infinite;}
+.steam-line:nth-child(2){animation-delay:.4s;height:60%;}
+.steam-line:nth-child(3){animation-delay:.8s;}
+
+/* ===== PAGE TRANSITIONS ===== */
+.page-enter{animation:fadeIn .4s ease both;}
+
+/* ===== REVEAL ON SCROLL ===== */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .6s ease,transform .6s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal-left{opacity:0;transform:translateX(-28px);transition:opacity .6s ease,transform .6s ease;}
+.reveal-left.visible{opacity:1;transform:translateX(0);}
+.reveal-right{opacity:0;transform:translateX(28px);transition:opacity .6s ease,transform .6s ease;}
+.reveal-right.visible{opacity:1;transform:translateX(0);}
+
+/* ===== HOVER EFFECTS ===== */
+.hover-lift{transition:transform var(--t-normal);}
+.hover-lift:hover{transform:translateY(-5px);}
+.hover-glow{transition:box-shadow var(--t-normal);}
+.hover-glow:hover{box-shadow:var(--shadow-glow);}
+.hover-scale{transition:transform var(--t-fast);}
+.hover-scale:hover{transform:scale(1.03);}
+
+/* ===== MICRO-INTERACTIONS ===== */
+.ripple-btn{position:relative;overflow:hidden;}
+.ripple-btn .ripple-circle{position:absolute;border-radius:50%;background:rgba(255,255,255,.3);transform:scale(0);animation:ripple .5s ease-out;}
+
+/* ===== LOADING SKELETON ===== */
+.skeleton{background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:var(--r-md);}
+.skeleton-text{height:14px;width:100%;margin-bottom:var(--sp-2);}
+.skeleton-text.w-75{width:75%;}
+.skeleton-text.w-50{width:50%;}
+.skeleton-card{height:200px;border-radius:var(--r-xl);}
+
+/* ===== CONFETTI (Order confirmation) ===== */
+.confetti-piece{position:fixed;width:10px;height:10px;border-radius:2px;animation:rainDrop 2.5s ease-in forwards;pointer-events:none;z-index:9999;}
+
+/* ===== ACTIVE STATE NAV ===== */
+.nav-link-anim{position:relative;}
+.nav-link-anim span{display:inline-block;transition:transform var(--t-fast);}
+.nav-link-anim:hover span{transform:translateY(-2px);}
+
+/* ===== SCROLL INDICATOR ===== */
+.scroll-indicator{position:fixed;top:0;left:0;height:3px;background:var(--grad-primary);z-index:9001;transition:width .1s linear;}
+
+/* ===== HEALTH METER ANIMATION ===== */
+.meter-fill{animation:slideProgress 1s ease .3s both;}

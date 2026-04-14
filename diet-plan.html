@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Diet Plan — Khaana Peena</title>
+<link rel="stylesheet" href="css/style.css"/>
+<link rel="stylesheet" href="css/components.css"/>
+<link rel="stylesheet" href="css/animations.css"/>
+<style>
+.day-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-xl);padding:var(--sp-5);transition:all var(--t-normal);}
+.day-card:hover{border-color:var(--border-warm);}
+.day-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--sp-4);padding-bottom:var(--sp-3);border-bottom:1px solid var(--border);}
+.meal-entry{display:flex;align-items:center;gap:var(--sp-3);padding:var(--sp-3) 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.meal-entry:last-child{border-bottom:none;}
+.meal-entry-emoji{font-size:1.5rem;width:36px;text-align:center;}
+.meal-time-label{font-size:.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;}
+.macro-summary{display:flex;gap:var(--sp-4);margin-top:var(--sp-4);padding-top:var(--sp-3);border-top:1px solid var(--border);font-size:.78rem;}
+.macro-pill{background:var(--bg-card-2);border-radius:var(--r-full);padding:3px 10px;display:flex;align-items:center;gap:4px;}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand"><span class="nav-logo-text">Khaana Peena</span><span class="nav-logo-dot"></span></a>
+    <div class="nav-links">
+      <a href="dashboard.html" class="nav-link">Dashboard</a>
+      <a href="meal-planner.html" class="nav-link">Meal Planner</a>
+      <a href="diet-plan.html" class="nav-link active">Diet Plan</a>
+    </div>
+    <div class="nav-actions" id="nav-user-area"></div>
+  </div>
+</nav>
+
+<div class="app-layout" style="padding-top:var(--nav-h);">
+  <aside class="sidebar">
+    <div id="sidebar-profile" style="margin-bottom:var(--sp-6);"></div>
+    <div class="sidebar-section">
+      <span class="sidebar-label">Main</span>
+      <a href="dashboard.html" class="sidebar-link"><span class="icon">🏠</span> Dashboard</a>
+      <a href="meal-planner.html" class="sidebar-link"><span class="icon">🍽️</span> Meal Planner</a>
+      <a href="chai-studio.html" class="sidebar-link"><span class="icon">☕</span> Chai Studio</a>
+      <a href="customize.html" class="sidebar-link"><span class="icon">🎛️</span> Customize Food</a>
+    </div>
+    <div class="sidebar-section">
+      <span class="sidebar-label">Planning</span>
+      <a href="diet-plan.html" class="sidebar-link active"><span class="icon">📋</span> Diet Plan</a>
+      <a href="gym-plan.html" class="sidebar-link"><span class="icon">🏋️</span> Gym Plan</a>
+      <a href="order.html" class="sidebar-link"><span class="icon">📦</span> Order</a>
+    </div>
+    <div class="sidebar-section">
+      <a href="profile.html" class="sidebar-link"><span class="icon">👤</span> My Profile</a>
+      <a href="#" class="sidebar-link" onclick="KP.logout()"><span class="icon">🚪</span> Logout</a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header anim-slide-down">
+      <div class="flex justify-between items-center flex-wrap gap-4">
+        <div><h1 style="font-size:1.8rem;">📋 Diet Plan</h1><p style="margin-top:4px;">Your personalized 7-day meal plan, calibrated to your health goals</p></div>
+        <div class="flex gap-3">
+          <button class="btn btn-primary btn-sm ripple-btn" onclick="generateWeekPlan()">🔄 Generate Week Plan</button>
+          <button class="btn btn-secondary btn-sm" onclick="exportPlan()">⬇️ Export Plan</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MACRO TARGETS SUMMARY -->
+    <div class="grid grid-4 anim-slide-up" style="margin-bottom:var(--sp-8);" id="targets-summary"></div>
+
+    <!-- TABS: VIEW / EDIT -->
+    <div class="tabs" style="margin-bottom:var(--sp-6);">
+      <div class="tab active" onclick="switchPlanTab('week',this)">📅 Week Plan</div>
+      <div class="tab" onclick="switchPlanTab('edit',this)">✏️ Customize Plan</div>
+      <div class="tab" onclick="switchPlanTab('macros',this)">📊 Macro Tracker</div>
+    </div>
+
+    <!-- WEEK PLAN -->
+    <div id="tab-week">
+      <div class="grid grid-2" id="week-plan-grid"></div>
+    </div>
+
+    <!-- EDIT PLAN -->
+    <div id="tab-edit" style="display:none;">
+      <div class="glass-card anim-fade-in">
+        <h4 style="margin-bottom:var(--sp-5);">✏️ Enter Your Own Diet Plan</h4>
+        <p style="margin-bottom:var(--sp-5);font-size:.9rem;">Add meals manually. We'll analyze them against your health profile and suggest improvements.</p>
+        <div class="grid grid-2" style="gap:var(--sp-5);">
+          <div class="form-group"><label class="form-label">Breakfast</label><input type="text" id="edit-breakfast" placeholder="e.g. Poha, 2 eggs, chai"/></div>
+          <div class="form-group"><label class="form-label">Mid-Morning Snack</label><input type="text" id="edit-snack1" placeholder="e.g. Fruit, makhana, green tea"/></div>
+          <div class="form-group"><label class="form-label">Lunch</label><input type="text" id="edit-lunch" placeholder="e.g. Dal chawal, roti sabzi"/></div>
+          <div class="form-group"><label class="form-label">Evening Snack</label><input type="text" id="edit-snack2" placeholder="e.g. Sprouts chaat, chaas"/></div>
+          <div class="form-group"><label class="form-label">Dinner</label><input type="text" id="edit-dinner" placeholder="e.g. Khichdi, grilled paneer, salad"/></div>
+          <div class="form-group"><label class="form-label">Post-Dinner</label><input type="text" id="edit-post" placeholder="e.g. Haldi doodh, fruit"/></div>
+        </div>
+        <div class="form-group" style="margin-top:var(--sp-4);">
+          <label class="form-label">Any dietary restrictions or notes</label>
+          <textarea id="edit-notes" placeholder="Eg: No onion garlic, low sodium, post-surgery diet..." rows="2"></textarea>
+        </div>
+        <div class="flex gap-3">
+          <button class="btn btn-primary ripple-btn" onclick="saveDietPlan()">💾 Save Diet Plan</button>
+          <button class="btn btn-health" onclick="analyzeDietPlan()">🧠 Analyze with Health Engine</button>
+        </div>
+        <div id="analysis-result" style="margin-top:var(--sp-6);display:none;"></div>
+      </div>
+    </div>
+
+    <!-- MACRO TRACKER -->
+    <div id="tab-macros" style="display:none;">
+      <div class="glass-card anim-fade-in">
+        <h4 style="margin-bottom:var(--sp-6);">📊 Weekly Macro Overview</h4>
+        <div id="macro-chart-area" style="display:flex;flex-direction:column;gap:var(--sp-5);"></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+<script src="js/app.js"></script>
+<script src="js/meal-data.js"></script>
+<script src="js/health-engine.js"></script>
+<script>
+const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+let profile = {}, targets = {};
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (!KP.requireAuth()) return;
+  profile = KP.getProfile() || {};
+  targets = HealthEngine.getMacroTargets(profile);
+
+  renderTargetsSummary();
+  generateWeekPlan();
+  renderMacroChart();
+
+  // Load saved diet plan
+  const saved = KP.load('diet_plan', {});
+  if (saved.breakfast) document.getElementById('edit-breakfast').value = saved.breakfast || '';
+  if (saved.lunch)     document.getElementById('edit-lunch').value    = saved.lunch || '';
+  if (saved.dinner)    document.getElementById('edit-dinner').value   = saved.dinner || '';
+});
+
+function renderTargetsSummary() {
+  const el = document.getElementById('targets-summary');
+  el.innerHTML = `
+    <div class="stat-card reveal"><div class="stat-icon">🔥</div><div class="stat-value grad-text">${targets.calories}</div><div class="stat-label">Daily Calories</div></div>
+    <div class="stat-card reveal delay-1"><div class="stat-icon">💪</div><div class="stat-value" style="color:var(--accent);">${targets.protein}g</div><div class="stat-label">Protein Target</div></div>
+    <div class="stat-card reveal delay-2"><div class="stat-icon">🫙</div><div class="stat-value" style="color:var(--warning);">${targets.carbs}g</div><div class="stat-label">Carb Target</div></div>
+    <div class="stat-card reveal delay-3"><div class="stat-icon">🥑</div><div class="stat-value" style="color:var(--info);">${targets.fat}g</div><div class="stat-label">Fat Target</div></div>`;
+  KP.initReveal();
+}
+
+function generateWeekPlan() {
+  const grid = document.getElementById('week-plan-grid');
+  const plan  = HealthEngine.getDailyPlan(profile);
+  const mealTypes = [
+    { key:'breakfast', label:'Breakfast', icon:'☀️', time:'8:00 AM' },
+    { key:'lunch',     label:'Lunch',     icon:'🌤️', time:'1:00 PM' },
+    { key:'snack',     label:'Snack',     icon:'🍵', time:'4:30 PM' },
+    { key:'dinner',    label:'Dinner',    icon:'🌙', time:'8:00 PM' }
+  ];
+
+  grid.innerHTML = DAYS.map((day, di) => {
+    const dayPlan = HealthEngine.getDailyPlan(profile);
+    const totalCal = [dayPlan.breakfast, dayPlan.lunch, dayPlan.snack, dayPlan.dinner].reduce((a,f)=>a+(f?.calories||0),0);
+    return `
+    <div class="day-card reveal" style="animation-delay:${di*0.07}s;">
+      <div class="day-header">
+        <strong>${day}</strong>
+        <span class="badge badge-primary">${totalCal} kcal</span>
+      </div>
+      ${mealTypes.map(mt => {
+        const food = dayPlan[mt.key];
+        if (!food) return '';
+        return `<div class="meal-entry">
+          <div class="meal-entry-emoji">${food.emoji}</div>
+          <div style="flex:1;min-width:0;">
+            <div class="meal-time-label">${mt.icon} ${mt.label} · ${mt.time}</div>
+            <div style="font-size:.88rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${food.name}</div>
+          </div>
+          <span style="font-size:.75rem;color:var(--text-muted);">${food.calories}kcal</span>
+        </div>`;
+      }).join('')}
+      <div class="macro-summary">
+        <div class="macro-pill"><span>💪</span><span>${Math.round([dayPlan.breakfast,dayPlan.lunch,dayPlan.dinner].reduce((a,f)=>a+(f?.protein||0),0))}g protein</span></div>
+        <div class="macro-pill"><span>🫙</span><span>${Math.round([dayPlan.breakfast,dayPlan.lunch,dayPlan.dinner].reduce((a,f)=>a+(f?.carbs||0),0))}g carbs</span></div>
+      </div>
+    </div>`;
+  }).join('');
+  KP.initReveal();
+  KP.toast('✅ 7-day meal plan generated!','success');
+}
+
+function renderMacroChart() {
+  const el = document.getElementById('macro-chart-area');
+  const macros = [
+    { name:'Calories', target:targets.calories, unit:'kcal', color:'var(--primary)', icon:'🔥' },
+    { name:'Protein',  target:targets.protein,  unit:'g',    color:'var(--accent)',  icon:'💪' },
+    { name:'Carbs',    target:targets.carbs,     unit:'g',    color:'var(--warning)', icon:'🫙' },
+    { name:'Fat',      target:targets.fat,       unit:'g',    color:'var(--info)',    icon:'🥑' },
+    { name:'Fiber',    target:targets.fiber,     unit:'g',    color:'var(--purple)',  icon:'🌾' }
+  ];
+  el.innerHTML = macros.map(m => `
+    <div>
+      <div class="flex justify-between items-center" style="margin-bottom:var(--sp-2);">
+        <span style="font-size:.9rem;font-weight:600;">${m.icon} ${m.name} — Daily Target</span>
+        <span style="font-size:.9rem;color:${m.color};font-weight:700;">${m.target} ${m.unit}</span>
+      </div>
+      <div style="display:flex;gap:4px;">
+        ${DAYS.map((_,i) => {
+          const pct = 40 + Math.random()*55;
+          return `<div style="flex:1;background:rgba(255,255,255,.06);border-radius:4px;height:40px;position:relative;overflow:hidden;cursor:pointer;" title="${DAYS[i]}: ${Math.round(m.target*(pct/100))} ${m.unit}">
+            <div style="position:absolute;bottom:0;left:0;right:0;background:${m.color};opacity:.7;border-radius:4px;height:${pct}%;transition:height var(--t-slow);"></div>
+          </div>`;
+        }).join('')}
+      </div>
+      <div class="flex justify-between" style="margin-top:4px;font-size:.7rem;color:var(--text-muted);">
+        ${DAYS.map(d=>d.slice(0,3)).map(d=>`<span style="flex:1;text-align:center;">${d}</span>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function switchPlanTab(tab, el) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  ['week','edit','macros'].forEach(t => document.getElementById('tab-'+t).style.display = t===tab?'block':'none');
+}
+
+function saveDietPlan() {
+  const plan = {
+    breakfast: document.getElementById('edit-breakfast').value,
+    snack1:    document.getElementById('edit-snack1').value,
+    lunch:     document.getElementById('edit-lunch').value,
+    snack2:    document.getElementById('edit-snack2').value,
+    dinner:    document.getElementById('edit-dinner').value,
+    post:      document.getElementById('edit-post').value,
+    notes:     document.getElementById('edit-notes').value,
+    savedAt:   new Date().toISOString()
+  };
+  KP.save('diet_plan', plan);
+  KP.toast('✅ Diet plan saved!','success');
+}
+
+function analyzeDietPlan() {
+  const el = document.getElementById('analysis-result');
+  el.style.display = 'block';
+  el.innerHTML = '<div class="anim-shimmer" style="height:80px;border-radius:var(--r-lg);"></div>';
+  setTimeout(() => {
+    const conditions = profile.conditions||[];
+    const tips = [
+      conditions.includes('diabetes') ? '<div class="health-alert warn"><span class="alert-icon">🩸</span>Ensure carbs are spread evenly. No single large carb meal.</div>' : '',
+      conditions.includes('hypertension') ? '<div class="health-alert warn"><span class="alert-icon">❤️</span>Watch sodium. Avoid pickles, papad, and extra salt.</div>' : '',
+      conditions.includes('gym') ? '<div class="health-alert safe"><span class="alert-icon">💪</span>Add a high-protein snack post-workout (eg: eggs, paneer, dal).</div>' : '',
+      '<div class="health-alert safe"><span class="alert-icon">💚</span>Your diet plan looks balanced. Consider adding more fiber-rich foods.</div>'
+    ].filter(Boolean);
+    el.innerHTML = `<h5 style="margin-bottom:var(--sp-4);">🧠 Health Engine Analysis</h5>${tips.join('')}`;
+  }, 1400);
+}
+
+function exportPlan() {
+  KP.toast('📥 Export feature coming soon!','info');
+}
+</script>
+<div style="text-align: center; padding: 15px; font-weight: bold; background: var(--bg-secondary); color: var(--text-primary); border-top: 1px solid var(--border); width: 100%; position: relative; z-index: 1000; font-size: 1.1rem; letter-spacing: 0.5px;">
+  Made with ❤️ by Avii
+</div>
+</body>
+</html>

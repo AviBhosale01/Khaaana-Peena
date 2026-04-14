@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Health Profile Setup — Khaana Peena</title>
+<link rel="stylesheet" href="css/style.css"/>
+<link rel="stylesheet" href="css/components.css"/>
+<link rel="stylesheet" href="css/animations.css"/>
+<style>
+.onboard-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:calc(var(--nav-h) + var(--sp-8)) var(--sp-6) var(--sp-8);}
+.onboard-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-2xl);padding:var(--sp-10);max-width:640px;width:100%;position:relative;}
+.step-panel{display:none;animation:fadeIn .4s ease;}
+.step-panel.active{display:block;}
+.condition-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--sp-3);}
+.cond-item{border:1.5px solid var(--border);border-radius:var(--r-md);padding:var(--sp-4);cursor:pointer;transition:all var(--t-fast);display:flex;align-items:center;gap:var(--sp-3);}
+.cond-item:hover{border-color:var(--border-warm);background:var(--bg-glass-warm);}
+.cond-item.selected{border-color:var(--primary);background:rgba(255,107,53,.1);}
+.cond-icon{font-size:1.6rem;}
+.activity-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--sp-3);}
+.activity-card{border:1.5px solid var(--border);border-radius:var(--r-lg);padding:var(--sp-5);cursor:pointer;transition:all var(--t-fast);text-align:center;}
+.activity-card:hover{border-color:var(--border-warm);}
+.activity-card.selected{border-color:var(--primary);background:rgba(255,107,53,.1);}
+.pref-btn{padding:10px 20px;border:1.5px solid var(--border);border-radius:var(--r-md);cursor:pointer;transition:all var(--t-fast);font-size:.88rem;font-weight:600;color:var(--text-secondary);background:transparent;}
+.pref-btn:hover{border-color:var(--border-warm);color:var(--primary);}
+.pref-btn.selected{border-color:var(--primary);background:rgba(255,107,53,.1);color:var(--primary);}
+</style>
+</head>
+<body style="background:var(--bg-primary);">
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand"><span class="nav-logo-text">Khaana Peena</span><span class="nav-logo-dot"></span></a>
+    <div style="font-size:.85rem;color:var(--text-muted);">Setting up your health profile...</div>
+  </div>
+</nav>
+
+<div class="onboard-wrap">
+  <div class="onboard-card anim-scale-in">
+
+    <!-- HEADER -->
+    <div style="text-align:center;margin-bottom:var(--sp-8);">
+      <div id="step-emoji" style="font-size:3rem;margin-bottom:var(--sp-3);">👤</div>
+      <h2 id="step-title">Tell us about you</h2>
+      <p id="step-desc" style="margin-top:var(--sp-2);">We'll use this to personalize every meal, drink, and suggestion just for you.</p>
+    </div>
+
+    <!-- STEP PROGRESS -->
+    <div class="step-progress" id="step-progress">
+      <div class="step-item" id="si-1"><div class="step-circle active" id="sc-1">1</div><div class="step-line" id="sl-1"></div></div>
+      <div class="step-item" id="si-2"><div class="step-circle" id="sc-2">2</div><div class="step-line" id="sl-2"></div></div>
+      <div class="step-item" id="si-3"><div class="step-circle" id="sc-3">3</div><div class="step-line" id="sl-3"></div></div>
+      <div class="step-item" id="si-4"><div class="step-circle" id="sc-4">4</div><div class="step-line" id="sl-4"></div></div>
+      <div class="step-item" id="si-5"><div class="step-circle" id="sc-5">5</div></div>
+    </div>
+
+    <!-- ─── STEP 1: PERSONAL INFO ─── -->
+    <div class="step-panel active" id="step-1">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Full Name</label><input type="text" id="f-name" placeholder="Ravi Kumar"/></div>
+        <div class="form-group"><label class="form-label">Age</label><input type="number" id="f-age" placeholder="28" min="10" max="100"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Gender</label>
+          <div class="flex gap-3" style="flex-wrap:wrap;">
+            <button type="button" class="pref-btn" onclick="selectPref(this,'gender','male')">👨 Male</button>
+            <button type="button" class="pref-btn" onclick="selectPref(this,'gender','female')">👩 Female</button>
+            <button type="button" class="pref-btn" onclick="selectPref(this,'gender','other')">🧑 Other</button>
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Weight (kg)</label><input type="number" id="f-weight" placeholder="70"/></div>
+        <div class="form-group"><label class="form-label">Height (cm)</label><input type="number" id="f-height" placeholder="170"/></div>
+      </div>
+    </div>
+
+    <!-- ─── STEP 2: HEALTH CONDITIONS ─── -->
+    <div class="step-panel" id="step-2">
+      <p style="margin-bottom:var(--sp-5);font-size:.9rem;color:var(--text-muted);">Select all that apply. This helps us make food choices that are safe and optimal for you.</p>
+      <div class="condition-grid">
+        <div class="cond-item" id="cond-diabetes" onclick="toggleCondition('diabetes',this)">
+          <span class="cond-icon">🩸</span>
+          <div><strong style="font-size:.9rem;">Diabetes</strong><div style="font-size:.78rem;color:var(--text-muted);">Type 1 or Type 2</div></div>
+        </div>
+        <div class="cond-item" id="cond-hypertension" onclick="toggleCondition('hypertension',this)">
+          <span class="cond-icon">❤️</span>
+          <div><strong style="font-size:.9rem;">Hypertension</strong><div style="font-size:.78rem;color:var(--text-muted);">High blood pressure</div></div>
+        </div>
+        <div class="cond-item" id="cond-thyroid" onclick="toggleCondition('thyroid',this)">
+          <span class="cond-icon">🦋</span>
+          <div><strong style="font-size:.9rem;">Thyroid</strong><div style="font-size:.78rem;color:var(--text-muted);">Hypo or Hyperthyroid</div></div>
+        </div>
+        <div class="cond-item" id="cond-weight-loss" onclick="toggleCondition('weight-loss',this)">
+          <span class="cond-icon">⚖️</span>
+          <div><strong style="font-size:.9rem;">Weight Loss</strong><div style="font-size:.78rem;color:var(--text-muted);">Managing body weight</div></div>
+        </div>
+        <div class="cond-item" id="cond-gym" onclick="toggleCondition('gym',this)">
+          <span class="cond-icon">🏋️</span>
+          <div><strong style="font-size:.9rem;">Active / Gym</strong><div style="font-size:.78rem;color:var(--text-muted);">Regular workout routine</div></div>
+        </div>
+        <div class="cond-item" id="cond-lactoseIntolerant" onclick="toggleCondition('lactoseIntolerant',this)">
+          <span class="cond-icon">🥛</span>
+          <div><strong style="font-size:.9rem;">Lactose Intolerant</strong><div style="font-size:.78rem;color:var(--text-muted);">Avoid dairy</div></div>
+        </div>
+        <div class="cond-item" id="cond-glutenFree" onclick="toggleCondition('glutenFree',this)">
+          <span class="cond-icon">🌾</span>
+          <div><strong style="font-size:.9rem;">Gluten Free</strong><div style="font-size:.78rem;color:var(--text-muted);">Celiac / sensitivity</div></div>
+        </div>
+        <div class="cond-item" id="cond-pregnancy" onclick="toggleCondition('pregnancy',this)">
+          <span class="cond-icon">🤰</span>
+          <div><strong style="font-size:.9rem;">Pregnancy</strong><div style="font-size:.78rem;color:var(--text-muted);">Currently pregnant</div></div>
+        </div>
+      </div>
+      <div class="cond-item" style="margin-top:var(--sp-3);" id="cond-general" onclick="toggleCondition('general',this)">
+        <span class="cond-icon">✅</span>
+        <div><strong style="font-size:.9rem;">None / General Health</strong><div style="font-size:.78rem;color:var(--text-muted);">I want to eat healthier overall</div></div>
+      </div>
+    </div>
+
+    <!-- ─── STEP 3: ACTIVITY LEVEL ─── -->
+    <div class="step-panel" id="step-3">
+      <p style="margin-bottom:var(--sp-5);font-size:.9rem;color:var(--text-muted);">This helps us calculate your calorie and macro targets accurately.</p>
+      <div class="activity-grid" style="margin-bottom:var(--sp-6);">
+        <div class="activity-card" onclick="selectActivity('sedentary',this)">
+          <div style="font-size:2rem;margin-bottom:var(--sp-2);">🛋️</div>
+          <strong style="font-size:.9rem;">Sedentary</strong>
+          <p style="font-size:.78rem;margin-top:var(--sp-1);">Little to no exercise</p>
+        </div>
+        <div class="activity-card" onclick="selectActivity('light',this)">
+          <div style="font-size:2rem;margin-bottom:var(--sp-2);">🚶</div>
+          <strong style="font-size:.9rem;">Lightly Active</strong>
+          <p style="font-size:.78rem;margin-top:var(--sp-1);">1-3 days/week</p>
+        </div>
+        <div class="activity-card" onclick="selectActivity('moderate',this)">
+          <div style="font-size:2rem;margin-bottom:var(--sp-2);">🏃</div>
+          <strong style="font-size:.9rem;">Moderately Active</strong>
+          <p style="font-size:.78rem;margin-top:var(--sp-1);">3-5 days/week</p>
+        </div>
+        <div class="activity-card" onclick="selectActivity('active',this)">
+          <div style="font-size:2rem;margin-bottom:var(--sp-2);">🏋️</div>
+          <strong style="font-size:.9rem;">Very Active</strong>
+          <p style="font-size:.78rem;margin-top:var(--sp-1);">6-7 days/week</p>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Gym Days (select all that apply)</label>
+        <div class="flex gap-2 flex-wrap" id="gym-days">
+          <button type="button" class="pref-btn" onclick="toggleDay(this,'Mon')">Mon</button>
+          <button type="button" class="pref-btn" onclick="toggleDay(this,'Tue')">Tue</button>
+          <button type="button" class="pref-btn" onclick="toggleDay(this,'Wed')">Wed</button>
+          <button type="button" class="pref-btn" onclick="toggleDay(this,'Thu')">Thu</button>
+          <button type="button" class="pref-btn" onclick="toggleDay(this,'Fri')">Fri</button>
+          <button type="button" class="pref-btn" onclick="toggleDay(this,'Sat')">Sat</button>
+          <button type="button" class="pref-btn" onclick="toggleDay(this,'Sun')">Sun</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── STEP 4: FOOD PREFERENCES ─── -->
+    <div class="step-panel" id="step-4">
+      <div class="form-group">
+        <label class="form-label">Diet Type</label>
+        <div class="flex gap-3 flex-wrap">
+          <button type="button" class="pref-btn" onclick="selectPref(this,'dietType','vegetarian')">🌿 Vegetarian</button>
+          <button type="button" class="pref-btn" onclick="selectPref(this,'dietType','vegan')">🌱 Vegan</button>
+          <button type="button" class="pref-btn" onclick="selectPref(this,'dietType','non-vegetarian')">🍗 Non-Veg</button>
+          <button type="button" class="pref-btn" onclick="selectPref(this,'dietType','eggetarian')">🥚 Eggetarian</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Spice Tolerance</label>
+        <div class="flex gap-3 flex-wrap">
+          <button type="button" class="pref-btn" onclick="selectPref(this,'spiceTolerance','mild')">😌 Mild</button>
+          <button type="button" class="pref-btn" onclick="selectPref(this,'spiceTolerance','medium')">😊 Medium</button>
+          <button type="button" class="pref-btn" onclick="selectPref(this,'spiceTolerance','spicy')">🌶️ Spicy</button>
+          <button type="button" class="pref-btn" onclick="selectPref(this,'spiceTolerance','very-spicy')">🔥 Very Spicy</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Food Allergies / Avoid</label>
+        <div class="flex gap-2 flex-wrap" id="allergy-group">
+          <button type="button" class="pref-btn" onclick="this.classList.toggle('selected');toggleAllergy('nuts')">🥜 Nuts</button>
+          <button type="button" class="pref-btn" onclick="this.classList.toggle('selected');toggleAllergy('soy')">🫘 Soy</button>
+          <button type="button" class="pref-btn" onclick="this.classList.toggle('selected');toggleAllergy('egg')">🥚 Egg</button>
+          <button type="button" class="pref-btn" onclick="this.classList.toggle('selected');toggleAllergy('shellfish')">🦐 Shellfish</button>
+          <button type="button" class="pref-btn" onclick="this.classList.toggle('selected');toggleAllergy('none')">✅ None</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Favourite Cuisines</label>
+        <div class="flex gap-2 flex-wrap">
+          <button type="button" class="pref-btn" onclick="this.classList.toggle('selected')">🍛 North Indian</button>
+          <button type="button" class="pref-btn" onclick="this.classList.toggle('selected')">🥘 South Indian</button>
+          <button type="button" class="pref-btn" onclick="this.classList.toggle('selected')">🫕 Punjabi</button>
+          <button type="button" class="pref-btn" onclick="this.classList.toggle('selected')">🍜 Gujarati</button>
+          <button type="button" class="pref-btn" onclick="this.classList.toggle('selected')">🌏 Pan-Indian</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── STEP 5: MEAL TIMING ─── -->
+    <div class="step-panel" id="step-5">
+      <p style="margin-bottom:var(--sp-5);font-size:.9rem;color:var(--text-muted);">We'll remind you at the right time and adjust portion timing for digestion.</p>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">☀️ Breakfast Time</label><input type="time" id="t-breakfast" value="08:00"/></div>
+        <div class="form-group"><label class="form-label">🌤️ Lunch Time</label><input type="time" id="t-lunch" value="13:00"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">☕ Evening Snack</label><input type="time" id="t-snack" value="16:30"/></div>
+        <div class="form-group"><label class="form-label">🌙 Dinner Time</label><input type="time" id="t-dinner" value="20:00"/></div>
+      </div>
+      <div class="form-group"><label class="form-label">Water Goal (glasses/day)</label>
+        <div class="slider-wrap">
+          <div class="slider-row"><input type="range" id="water-goal" min="4" max="16" value="8" oninput="document.getElementById('water-val').textContent=this.value"/><span class="slider-val" id="water-val">8</span></div>
+          <div class="slider-labels"><span>4 glasses</span><span>16 glasses</span></div>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Additional Health Notes</label>
+        <textarea id="health-notes" placeholder="Anything else we should know? Eg: recovering from surgery, lactating, post-Covid, etc." rows="3"></textarea>
+      </div>
+    </div>
+
+    <!-- NAVIGATION -->
+    <div class="flex justify-between items-center" style="margin-top:var(--sp-8);">
+      <button class="btn btn-ghost" id="btn-back" onclick="prevStep()" style="display:none;">← Back</button>
+      <div id="step-indicator" style="font-size:.82rem;color:var(--text-muted);">Step 1 of 5</div>
+      <button class="btn btn-primary ripple-btn" id="btn-next" onclick="nextStep()">Continue →</button>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+<script src="js/app.js"></script>
+<script>
+// Must be logged in
+document.addEventListener('DOMContentLoaded', () => { KP.requireAuth(); });
+
+let currentStep = 1;
+const totalSteps = 5;
+const profile = {
+  conditions: [],
+  gymDays: [],
+  allergies: [],
+  activityLevel: 'moderate',
+  gender: null,
+  dietType: null,
+  spiceTolerance: null
+};
+
+const stepMeta = [
+  { title:'Tell us about you', desc:'Basic info to calculate your personalized nutrition targets.', emoji:'👤' },
+  { title:'Health conditions', desc:"Select all that apply. We'll make sure every meal is safe for you.", emoji:'🏥' },
+  { title:'Activity & gym schedule', desc:'Helps us calculate your calorie needs and optimize workout meals.', emoji:'🏋️' },
+  { title:'Food preferences', desc:'Your taste + lifestyle = the perfect meal plan for you.', emoji:'🍽️' },
+  { title:'Meal timing & goals', desc:'The finishing touch — when you eat matters as much as what you eat.', emoji:'⏰' }
+];
+
+function updateUI() {
+  const m = stepMeta[currentStep-1];
+  document.getElementById('step-emoji').textContent = m.emoji;
+  document.getElementById('step-title').textContent = m.title;
+  document.getElementById('step-desc').textContent  = m.desc;
+  document.getElementById('step-indicator').textContent = `Step ${currentStep} of ${totalSteps}`;
+  document.getElementById('btn-back').style.display = currentStep > 1 ? 'inline-flex' : 'none';
+  document.getElementById('btn-next').textContent   = currentStep === totalSteps ? '🎉 Complete Setup' : 'Continue →';
+
+  for (let i = 1; i <= totalSteps; i++) {
+    const sc = document.getElementById('sc-'+i);
+    sc.classList.remove('active','done');
+    if (i < currentStep)  { sc.classList.add('done'); sc.textContent = '✓'; }
+    else if (i === currentStep) { sc.classList.add('active'); sc.textContent = i; }
+    else { sc.textContent = i; }
+    const sl = document.getElementById('sl-'+i);
+    if (sl) sl.style.background = i < currentStep ? 'var(--accent)' : 'var(--border)';
+  }
+
+  document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('step-'+currentStep).classList.add('active');
+}
+
+function nextStep() {
+  if (currentStep < totalSteps) {
+    currentStep++;
+    updateUI();
+    window.scrollTo({top:0,behavior:'smooth'});
+  } else {
+    saveProfile();
+  }
+}
+
+function prevStep() {
+  if (currentStep > 1) { currentStep--; updateUI(); }
+}
+
+function toggleCondition(cond, el) {
+  el.classList.toggle('selected');
+  if (cond === 'general') {
+    profile.conditions = el.classList.contains('selected') ? ['general'] : [];
+    document.querySelectorAll('.cond-item:not(#cond-general)').forEach(c => c.classList.remove('selected'));
+  } else {
+    profile.conditions = profile.conditions.filter(c => c !== 'general');
+    document.getElementById('cond-general').classList.remove('selected');
+    if (el.classList.contains('selected') && !profile.conditions.includes(cond)) {
+      profile.conditions.push(cond);
+    } else {
+      profile.conditions = profile.conditions.filter(c => c !== cond);
+    }
+  }
+}
+
+function selectActivity(level, el) {
+  document.querySelectorAll('.activity-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  profile.activityLevel = level;
+}
+
+function selectPref(el, key, val) {
+  const group = el.closest('.flex');
+  group.querySelectorAll('.pref-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  profile[key] = val;
+}
+
+function toggleDay(el, day) {
+  el.classList.toggle('selected');
+  if (el.classList.contains('selected') && !profile.gymDays.includes(day)) profile.gymDays.push(day);
+  else profile.gymDays = profile.gymDays.filter(d => d !== day);
+}
+
+function toggleAllergy(a) {
+  if (!profile.allergies) profile.allergies = [];
+  if (profile.allergies.includes(a)) profile.allergies = profile.allergies.filter(x => x !== a);
+  else profile.allergies.push(a);
+}
+
+function saveProfile() {
+  const user = KP.getUser();
+  if (user?.name && !document.getElementById('f-name').value) {
+    document.getElementById('f-name').value = user.name;
+  }
+
+  const fullProfile = {
+    ...profile,
+    name:     document.getElementById('f-name').value || user?.name,
+    age:      document.getElementById('f-age').value,
+    weight:   document.getElementById('f-weight').value,
+    height:   document.getElementById('f-height').value,
+    mealTimings: {
+      breakfast: document.getElementById('t-breakfast').value,
+      lunch:     document.getElementById('t-lunch').value,
+      snack:     document.getElementById('t-snack').value,
+      dinner:    document.getElementById('t-dinner').value
+    },
+    waterGoal:   document.getElementById('water-goal').value,
+    healthNotes: document.getElementById('health-notes').value,
+    setupDate:   new Date().toISOString()
+  };
+
+  if (!fullProfile.conditions?.length) fullProfile.conditions = ['general'];
+
+  KP.save('profile', fullProfile);
+  KP.toast('Health profile saved! 🎉','success');
+  setTimeout(() => window.location.href = 'dashboard.html', 900);
+}
+
+updateUI();
+</script>
+<div style="text-align: center; padding: 15px; font-weight: bold; background: var(--bg-secondary); color: var(--text-primary); border-top: 1px solid var(--border); width: 100%; position: relative; z-index: 1000; font-size: 1.1rem; letter-spacing: 0.5px;">
+  Made with ❤️ by Avii
+</div>
+</body>
+</html>

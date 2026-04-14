@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Khaana Peena — Health-Conscious Food & Beverage Platform</title>
+<meta name="description" content="India's first truly personalized, health-intelligent food and beverage platform. Customize every meal and drink based on your health profile — from diabetes to gym goals."/>
+<link rel="stylesheet" href="css/style.css"/>
+<link rel="stylesheet" href="css/components.css"/>
+<link rel="stylesheet" href="css/animations.css"/>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <span class="nav-logo-text">Khaana Peena</span>
+      <span class="nav-logo-dot"></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link active">Home</a></li>
+      <li><a href="meal-planner.html" class="nav-link">Meal Planner</a></li>
+      <li><a href="chai-studio.html" class="nav-link">Chai Studio</a></li>
+      <li><a href="diet-plan.html" class="nav-link">Diet Plan</a></li>
+    </ul>
+    <div class="nav-actions" id="nav-user-area">
+      <a href="login.html" class="btn btn-secondary btn-sm">Login</a>
+      <a href="login.html" class="btn btn-primary btn-sm">Get Started</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero-section" style="position:relative;min-height:100vh;display:flex;align-items:center;padding-top:var(--nav-h);overflow:hidden;background:var(--bg-primary);">
+  <div style="position:absolute;inset:0;background:var(--grad-hero);pointer-events:none;"></div>
+  <div id="food-rain" class="food-rain"></div>
+  <!-- Decorative orbs -->
+  <div style="position:absolute;top:15%;right:8%;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(255,107,53,.12),transparent 70%);pointer-events:none;animation:pulse 4s ease-in-out infinite;"></div>
+  <div style="position:absolute;bottom:10%;left:5%;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(46,204,113,.08),transparent 70%);pointer-events:none;animation:pulse 5s ease-in-out infinite 1.5s;"></div>
+
+  <div class="container" style="position:relative;z-index:2;text-align:center;padding:var(--sp-16) var(--sp-6);">
+    <div class="section-tag anim-fade-in">🇮🇳 India's First Health-Intelligent Food Platform</div>
+    <h1 class="anim-slide-up delay-1" style="max-width:860px;margin:var(--sp-5) auto;">
+      Food that <span class="grad-text">loves you back</span>,<br/>crafted for <span class="grad-text-health">your health</span>
+    </h1>
+    <p class="anim-slide-up delay-2" style="max-width:620px;margin:var(--sp-5) auto;font-size:1.15rem;color:var(--text-secondary);">
+      Personalized meals, customizable chai, and health-conscious suggestions — all based on <em>your</em> unique health profile. From diabetes to gym goals, we've got you covered.
+    </p>
+    <div class="flex justify-center gap-4 flex-wrap anim-slide-up delay-3" style="margin-top:var(--sp-8);">
+      <a href="login.html" class="btn btn-primary btn-xl ripple-btn">
+        <span>🍽️</span> Start Your Health Journey
+      </a>
+      <a href="chai-studio.html" class="btn btn-secondary btn-xl ripple-btn">
+        <span>☕</span> Try Chai Studio
+      </a>
+    </div>
+
+    <!-- TRUST PILLS -->
+    <div class="flex justify-center gap-4 flex-wrap anim-slide-up delay-5" style="margin-top:var(--sp-10);">
+      <span class="tag">✅ 55+ Indian Foods</span>
+      <span class="tag">🩸 Diabetes Aware</span>
+      <span class="tag">❤️ Hypertension Safe</span>
+      <span class="tag">🏋️ Gym Plan Sync</span>
+      <span class="tag">☕ Chai Customization</span>
+    </div>
+
+    <!-- SCROLL HINT -->
+    <div style="margin-top:var(--sp-12);animation:float 3s ease-in-out infinite;" class="anim-fade-in delay-8">
+      <div style="font-size:.8rem;color:var(--text-muted);margin-bottom:var(--sp-2);">Scroll to explore</div>
+      <div style="font-size:1.5rem;">↓</div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS STRIP -->
+<section style="background:var(--bg-secondary);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:var(--sp-8) var(--sp-6);">
+  <div class="container">
+    <div class="grid-4 grid" style="text-align:center;">
+      <div class="reveal">
+        <div style="font-size:2.2rem;font-weight:800;font-family:var(--font-heading);" class="grad-text">55+</div>
+        <div style="font-size:.85rem;color:var(--text-muted);">Indian Dishes</div>
+      </div>
+      <div class="reveal delay-1">
+        <div style="font-size:2.2rem;font-weight:800;font-family:var(--font-heading);" class="grad-text-health">9+</div>
+        <div style="font-size:.85rem;color:var(--text-muted);">Health Conditions Handled</div>
+      </div>
+      <div class="reveal delay-2">
+        <div style="font-size:2.2rem;font-weight:800;font-family:var(--font-heading);" class="grad-text">∞</div>
+        <div style="font-size:.85rem;color:var(--text-muted);">Chai Combinations</div>
+      </div>
+      <div class="reveal delay-3">
+        <div style="font-size:2.2rem;font-weight:800;font-family:var(--font-heading);" class="grad-text-health">100%</div>
+        <div style="font-size:.85rem;color:var(--text-muted);">Health-First Approach</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT MAKES US DIFFERENT -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">✨ Unique Features</div>
+      <h2 class="section-title reveal">What makes <span class="grad-text">Khaana Peena</span> different?</h2>
+      <p class="section-subtitle reveal">Not another calorie counter. We're your health-conscious Indian kitchen companion.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="feature-card reveal">
+        <span class="feature-icon">☕</span>
+        <h4 class="feature-title">Chai Studio</h4>
+        <p class="feature-desc">Customize every single element of your chai — sugar level, kadak-ness, milk ratio, ginger, cardamom, tulsi. All tracked against your health profile in real time.</p>
+        <a href="chai-studio.html" class="btn btn-secondary btn-sm" style="margin-top:var(--sp-4);">Try it →</a>
+      </div>
+      <div class="feature-card reveal delay-1">
+        <span class="feature-icon">🧠</span>
+        <h4 class="feature-title">Health Engine™</h4>
+        <p class="feature-desc">Our proprietary algorithm scores every food based on your personal conditions — diabetes, hypertension, thyroid and more. It's not medical, it's sensible.</p>
+        <a href="meal-planner.html" class="btn btn-secondary btn-sm" style="margin-top:var(--sp-4);">See Suggestions →</a>
+      </div>
+      <div class="feature-card reveal delay-2">
+        <span class="feature-icon">🍛</span>
+        <h4 class="feature-title">Ingredient Control</h4>
+        <p class="feature-desc">Don't just order food — control every ingredient. Less oil, less spice, swap white rice for brown rice. Your food, your health, your rules.</p>
+        <a href="customize.html" class="btn btn-secondary btn-sm" style="margin-top:var(--sp-4);">Customize Now →</a>
+      </div>
+      <div class="feature-card reveal delay-3">
+        <span class="feature-icon">🏋️</span>
+        <h4 class="feature-title">Gym + Diet Sync</h4>
+        <p class="feature-desc">Enter your workout schedule and diet plan. We adjust your meals for pre/post workout nutrition, macro targets, and calorie balance automatically.</p>
+        <a href="gym-plan.html" class="btn btn-secondary btn-sm" style="margin-top:var(--sp-4);">Sync Plan →</a>
+      </div>
+      <div class="feature-card reveal delay-4">
+        <span class="feature-icon">❤️</span>
+        <h4 class="feature-title">Health-Conscious First</h4>
+        <p class="feature-desc">We don't scare you with medical charts. We're your friendly companion who knows that one less spoon of sugar can change your life.</p>
+        <a href="onboarding.html" class="btn btn-secondary btn-sm" style="margin-top:var(--sp-4);">Build Profile →</a>
+      </div>
+      <div class="feature-card reveal delay-5">
+        <span class="feature-icon">🎛️</span>
+        <h4 class="feature-title">Total Personalization</h4>
+        <p class="feature-desc">From the food you eat to the beverage you sip — everything is calibrated to your body's need, your taste, and your health goal.</p>
+        <a href="profile.html" class="btn btn-secondary btn-sm" style="margin-top:var(--sp-4);">My Profile →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHAI STUDIO TEASER -->
+<section class="section" style="background:var(--bg-secondary);">
+  <div class="container">
+    <div class="grid grid-2" style="align-items:center;gap:var(--sp-12);">
+      <div class="reveal-left">
+        <div class="section-tag">☕ Signature Feature</div>
+        <h2 style="margin:var(--sp-4) 0;">Your <span class="grad-text">perfect chai</span>,<br/>crafted by you</h2>
+        <p style="margin-bottom:var(--sp-5);">We know chai is more than a drink — it's a ritual. That's why we let you control every single element, and we tell you exactly how it impacts your health.</p>
+        <div style="display:flex;flex-direction:column;gap:var(--sp-3);margin-bottom:var(--sp-6);">
+          <div class="flex items-center gap-3">
+            <span style="font-size:1.3rem;">🍬</span>
+            <div><strong>Sugar Control</strong> — 0 to 4 spoons, with real-time diabetes alert</div>
+          </div>
+          <div class="flex items-center gap-3">
+            <span style="font-size:1.3rem;">🍵</span>
+            <div><strong>Tea Strength</strong> — Light, Medium, or Kadak</div>
+          </div>
+          <div class="flex items-center gap-3">
+            <span style="font-size:1.3rem;">🥛</span>
+            <div><strong>Milk Type & Ratio</strong> — From no milk to extra, oat to almond</div>
+          </div>
+          <div class="flex items-center gap-3">
+            <span style="font-size:1.3rem;">🫚</span>
+            <div><strong>Add-ons</strong> — Ginger, cardamom, tulsi, cinnamon, black pepper</div>
+          </div>
+        </div>
+        <a href="chai-studio.html" class="btn btn-primary btn-lg ripple-btn">Open Chai Studio ☕</a>
+      </div>
+      <div class="reveal-right" style="display:flex;flex-direction:column;align-items:center;gap:var(--sp-6);">
+        <!-- Chai Cup Visual -->
+        <div style="position:relative;width:200px;height:240px;">
+          <div style="width:200px;height:200px;border-radius:0 0 60% 60%;border:4px solid rgba(255,107,53,.4);background:linear-gradient(180deg,rgba(180,100,50,.9),rgba(140,70,30,.95));position:relative;overflow:hidden;box-shadow:0 20px 50px rgba(255,107,53,.3);">
+            <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,200,150,.2) 0%,transparent 60%);"></div>
+          </div>
+          <!-- Handle -->
+          <div style="position:absolute;right:-28px;top:40px;width:30px;height:80px;border:4px solid rgba(255,107,53,.4);border-left:none;border-radius:0 40px 40px 0;"></div>
+          <!-- Saucer -->
+          <div style="width:240px;height:24px;border-radius:50%;background:rgba(255,107,53,.15);border:2px solid rgba(255,107,53,.3);position:absolute;bottom:-12px;left:-20px;"></div>
+          <!-- Steam -->
+          <div class="steam-wrap" style="position:absolute;top:-60px;left:50%;transform:translateX(-50%);">
+            <div class="steam-line" style="height:40px;"></div>
+            <div class="steam-line" style="height:30px;"></div>
+            <div class="steam-line" style="height:40px;"></div>
+          </div>
+        </div>
+        <!-- Health Badge -->
+        <div class="glass-card" style="max-width:280px;text-align:center;padding:var(--sp-5);">
+          <div style="font-size:.8rem;color:var(--text-muted);margin-bottom:var(--sp-3);">HEALTH CHECK</div>
+          <div class="health-alert safe" style="margin:0;justify-content:center;">
+            <span class="alert-icon">✅</span>
+            <span>Perfectly crafted for your health profile!</span>
+          </div>
+          <div style="margin-top:var(--sp-4);font-size:.82rem;color:var(--text-muted);">Calories: 55 kcal · Sugar: 0.5g · Caffeine: Moderate</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">🚀 How It Works</div>
+      <h2 class="section-title reveal">From profile to plate in <span class="grad-text">4 steps</span></h2>
+    </div>
+    <div class="grid grid-4" style="position:relative;">
+      <div class="reveal" style="text-align:center;">
+        <div style="width:64px;height:64px;border-radius:50%;background:var(--grad-primary);display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto var(--sp-4);box-shadow:var(--shadow-glow);">1</div>
+        <h5>Create Profile</h5>
+        <p style="font-size:.88rem;margin-top:var(--sp-2);">Enter your health conditions, weight, activity, food preferences in our smart 5-step wizard.</p>
+      </div>
+      <div class="reveal delay-1" style="text-align:center;">
+        <div style="width:64px;height:64px;border-radius:50%;background:rgba(46,204,113,.2);border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto var(--sp-4);box-shadow:var(--shadow-health);">2</div>
+        <h5>Get Smart Suggestions</h5>
+        <p style="font-size:.88rem;margin-top:var(--sp-2);">Our Health Engine™ scores and recommends the best Indian foods for your specific health situation.</p>
+      </div>
+      <div class="reveal delay-2" style="text-align:center;">
+        <div style="width:64px;height:64px;border-radius:50%;background:rgba(52,152,219,.2);border:2px solid var(--info);display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto var(--sp-4);">3</div>
+        <h5>Customize Everything</h5>
+        <p style="font-size:.88rem;margin-top:var(--sp-2);">Tweak every ingredient, adjust portion sizes, build your perfect chai — all health-checked in real time.</p>
+      </div>
+      <div class="reveal delay-3" style="text-align:center;">
+        <div style="width:64px;height:64px;border-radius:50%;background:rgba(155,89,182,.2);border:2px solid #9B59B6;display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto var(--sp-4);">4</div>
+        <h5>Order & Enjoy</h5>
+        <p style="font-size:.88rem;margin-top:var(--sp-2);">Place your customized order with your health note included. Eat well, live better, every single day.</p>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:var(--sp-10);">
+      <a href="login.html" class="btn btn-primary btn-xl ripple-btn">Start for Free →</a>
+    </div>
+  </div>
+</section>
+
+<!-- CONDITIONS SUPPORTED -->
+<section class="section" style="background:var(--bg-secondary);">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">🏥 Conditions We Support</div>
+      <h2 class="section-title reveal">Built for <span class="grad-text">real health needs</span></h2>
+      <p class="section-subtitle reveal">Not medical advice — just health-conscious, thoughtful food choices for your lifestyle.</p>
+    </div>
+    <div class="grid grid-auto-sm">
+      <div class="glass-card hover-lift reveal" style="text-align:center;padding:var(--sp-5);">
+        <div style="font-size:2rem;margin-bottom:var(--sp-3);">🩸</div>
+        <h5>Diabetes</h5>
+        <p style="font-size:.82rem;">Low glycemic options, portion guidance, sugar-safe beverages</p>
+      </div>
+      <div class="glass-card hover-lift reveal delay-1" style="text-align:center;padding:var(--sp-5);">
+        <div style="font-size:2rem;margin-bottom:var(--sp-3);">❤️</div>
+        <h5>Hypertension</h5>
+        <p style="font-size:.82rem;">Low-sodium meals, potassium-rich options, heart-friendly choices</p>
+      </div>
+      <div class="glass-card hover-lift reveal delay-2" style="text-align:center;padding:var(--sp-5);">
+        <div style="font-size:2rem;margin-bottom:var(--sp-3);">🦋</div>
+        <h5>Thyroid</h5>
+        <p style="font-size:.82rem;">Iodine-aware suggestions, metabolism-supporting foods</p>
+      </div>
+      <div class="glass-card hover-lift reveal delay-3" style="text-align:center;padding:var(--sp-5);">
+        <div style="font-size:2rem;margin-bottom:var(--sp-3);">⚖️</div>
+        <h5>Weight Loss</h5>
+        <p style="font-size:.82rem;">Calorie-controlled meals, high-fiber filling foods, metabolism boost</p>
+      </div>
+      <div class="glass-card hover-lift reveal delay-4" style="text-align:center;padding:var(--sp-5);">
+        <div style="font-size:2rem;margin-bottom:var(--sp-3);">🏋️</div>
+        <h5>Gym / Active</h5>
+        <p style="font-size:.82rem;">High-protein meal plans, pre/post workout nutrition, calorie surplus</p>
+      </div>
+      <div class="glass-card hover-lift reveal delay-5" style="text-align:center;padding:var(--sp-5);">
+        <div style="font-size:2rem;margin-bottom:var(--sp-3);">🌱</div>
+        <h5>Vegan / Veg</h5>
+        <p style="font-size:.82rem;">100% plant-based options, complete protein combos, B12 awareness</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">💬 What Users Say</div>
+      <h2 class="section-title reveal">Real people, <span class="grad-text">real results</span></h2>
+    </div>
+    <div class="grid grid-3">
+      <div class="glass-card hover-lift reveal">
+        <div style="font-size:1.4rem;margin-bottom:var(--sp-3);">⭐⭐⭐⭐⭐</div>
+        <p style="font-size:.92rem;font-style:italic;">"Finally a platform that gets it! As a diabetic, every food suggestion is perfectly calibrated. My blood sugar has been so stable since I started following the plan."</p>
+        <div class="flex items-center gap-3" style="margin-top:var(--sp-5);">
+          <div class="avatar avatar-sm" style="background:var(--grad-primary);">R</div>
+          <div><div style="font-weight:700;font-size:.88rem;">Ramesh Gupta</div><div style="font-size:.75rem;color:var(--text-muted);">Diabetes Type 2 · Delhi</div></div>
+        </div>
+      </div>
+      <div class="glass-card hover-lift reveal delay-1">
+        <div style="font-size:1.4rem;margin-bottom:var(--sp-3);">⭐⭐⭐⭐⭐</div>
+        <p style="font-size:.92rem;font-style:italic;">"The Chai Studio is addictive! I customized my own 'gym chai' — less sugar, strong ginger, tulsi — and it checks out healthy for my workout days. Brilliant!"</p>
+        <div class="flex items-center gap-3" style="margin-top:var(--sp-5);">
+          <div class="avatar avatar-sm" style="background:var(--grad-health);">P</div>
+          <div><div style="font-weight:700;font-size:.88rem;">Priya Sharma</div><div style="font-size:.75rem;color:var(--text-muted);">Fitness Enthusiast · Mumbai</div></div>
+        </div>
+      </div>
+      <div class="glass-card hover-lift reveal delay-2">
+        <div style="font-size:1.4rem;margin-bottom:var(--sp-3);">⭐⭐⭐⭐⭐</div>
+        <p style="font-size:.92rem;font-style:italic;">"I love Indian food but was worried about my BP. Khaana Peena suggests the best low-sodium versions of all my favourite dishes. It's like having a dietitian who knows desi food!"</p>
+        <div class="flex items-center gap-3" style="margin-top:var(--sp-5);">
+          <div class="avatar avatar-sm" style="background:rgba(52,152,219,.3);">A</div>
+          <div><div style="font-weight:700;font-size:.88rem;">Anita Verma</div><div style="font-size:.75rem;color:var(--text-muted);">Hypertension · Pune</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section" style="background:var(--bg-secondary);">
+  <div class="container-narrow" style="text-align:center;">
+    <div style="font-size:4rem;margin-bottom:var(--sp-5);animation:float 3s ease-in-out infinite;">🍛</div>
+    <h2 class="section-title reveal">Begin your health-conscious <span class="grad-text">food journey</span> today</h2>
+    <p class="section-subtitle reveal" style="margin-bottom:var(--sp-8);">Join thousands of Indians who eat smarter, feel better, and never compromise on taste.</p>
+    <div class="flex justify-center gap-4 flex-wrap">
+      <a href="login.html" class="btn btn-primary btn-xl ripple-btn">Create Free Account →</a>
+      <a href="meal-planner.html" class="btn btn-ghost btn-xl">Explore Meal Plans</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="nav-logo-text" style="font-family:var(--font-brand);font-size:1.8rem;background:var(--grad-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Khaana Peena</div>
+      <p>India's first health-intelligent food & beverage customization platform. Eat right, feel right.</p>
+      <div class="footer-social">
+        <div class="social-btn">📘</div>
+        <div class="social-btn">🐦</div>
+        <div class="social-btn">📸</div>
+        <div class="social-btn">▶️</div>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h6>Platform</h6>
+      <ul>
+        <li><a href="meal-planner.html">Meal Planner</a></li>
+        <li><a href="chai-studio.html">Chai Studio</a></li>
+        <li><a href="customize.html">Customize Food</a></li>
+        <li><a href="diet-plan.html">Diet Plan</a></li>
+        <li><a href="gym-plan.html">Gym Plan</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h6>Health</h6>
+      <ul>
+        <li><a href="#">Diabetes Guide</a></li>
+        <li><a href="#">Hypertension Diet</a></li>
+        <li><a href="#">Weight Loss Tips</a></li>
+        <li><a href="#">Gym Nutrition</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h6>Account</h6>
+      <ul>
+        <li><a href="login.html">Login</a></li>
+        <li><a href="login.html">Sign Up</a></li>
+        <li><a href="profile.html">My Profile</a></li>
+        <li><a href="onboarding.html">Health Setup</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 Khaana Peena. Made with ❤️ for a healthier India.</span>
+    <span>🏆 Hackathon Edition</span>
+  </div>
+</footer>
+
+<div class="toast-container" id="toast-container"></div>
+
+<script src="js/app.js"></script>
+<script>
+  KP.initFoodRain('food-rain');
+</script>
+<div style="text-align: center; padding: 15px; font-weight: bold; background: var(--bg-secondary); color: var(--text-primary); border-top: 1px solid var(--border); width: 100%; position: relative; z-index: 1000; font-size: 1.1rem; letter-spacing: 0.5px;">
+  Made with ❤️ by Avii
+</div>
+</body>
+</html>

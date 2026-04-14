@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Login — Khaana Peena</title>
+<meta name="description" content="Login or create your Khaana Peena account to get personalized, health-conscious meal and beverage suggestions."/>
+<link rel="stylesheet" href="css/style.css"/>
+<link rel="stylesheet" href="css/components.css"/>
+<link rel="stylesheet" href="css/animations.css"/>
+<style>
+.auth-wrap{min-height:100vh;display:flex;align-items:stretch;}
+.auth-left{flex:1;background:var(--bg-secondary);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:var(--sp-12);position:relative;overflow:hidden;}
+.auth-left::before{content:'';position:absolute;inset:0;background:var(--grad-hero);}
+.auth-right{width:480px;flex-shrink:0;background:var(--bg-primary);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:var(--sp-10);}
+.auth-card{width:100%;max-width:400px;}
+.auth-visual{position:relative;z-index:1;text-align:center;}
+.auth-tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:var(--sp-8);}
+.auth-tab{flex:1;padding:var(--sp-3) 0;font-size:.95rem;font-weight:700;color:var(--text-muted);cursor:pointer;text-align:center;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all var(--t-fast);}
+.auth-tab.active{color:var(--primary);border-bottom-color:var(--primary);}
+.input-group{position:relative;}
+.input-group input{padding-left:44px;}
+.input-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:1.1rem;color:var(--text-muted);pointer-events:none;}
+.strength-bar{height:4px;background:var(--border);border-radius:var(--r-full);margin-top:var(--sp-2);overflow:hidden;}
+.strength-fill{height:100%;border-radius:var(--r-full);transition:all var(--t-normal);}
+@media(max-width:768px){.auth-left{display:none;}.auth-right{width:100%;}}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <span class="nav-logo-text">Khaana Peena</span>
+      <span class="nav-logo-dot"></span>
+    </a>
+    <div class="nav-actions">
+      <a href="index.html" class="btn btn-ghost btn-sm">← Back to Home</a>
+    </div>
+  </div>
+</nav>
+
+<div class="auth-wrap" style="padding-top:var(--nav-h);">
+
+  <!-- LEFT VISUAL PANEL -->
+  <div class="auth-left">
+    <div class="auth-visual">
+      <div style="font-size:5rem;animation:float 4s ease-in-out infinite;display:block;margin-bottom:var(--sp-6);">🍛</div>
+      <h2 style="font-size:2rem;margin-bottom:var(--sp-4);">Your health-conscious<br/><span class="grad-text">kitchen companion</span></h2>
+      <p style="max-width:360px;text-align:center;color:var(--text-secondary);">Personalized Indian food and beverage suggestions crafted around your unique health profile.</p>
+
+      <div style="margin-top:var(--sp-8);display:flex;flex-direction:column;gap:var(--sp-4);text-align:left;max-width:340px;">
+        <div class="flex items-center gap-3 glass-card" style="padding:var(--sp-3) var(--sp-4);border-radius:var(--r-md);">
+          <span style="font-size:1.4rem;">🩸</span>
+          <div><strong style="font-size:.88rem;">Diabetes-aware meals</strong><p style="font-size:.78rem;margin:0;">Low-GI suggestions every day</p></div>
+        </div>
+        <div class="flex items-center gap-3 glass-card" style="padding:var(--sp-3) var(--sp-4);border-radius:var(--r-md);">
+          <span style="font-size:1.4rem;">☕</span>
+          <div><strong style="font-size:.88rem;">Chai Studio</strong><p style="font-size:.78rem;margin:0;">Customize every sip</p></div>
+        </div>
+        <div class="flex items-center gap-3 glass-card" style="padding:var(--sp-3) var(--sp-4);border-radius:var(--r-md);">
+          <span style="font-size:1.4rem;">🏋️</span>
+          <div><strong style="font-size:.88rem;">Gym + Diet Sync</strong><p style="font-size:.78rem;margin:0;">Fuel your workouts right</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT FORM PANEL -->
+  <div class="auth-right">
+    <div class="auth-card">
+      <div style="text-align:center;margin-bottom:var(--sp-8);">
+        <div style="font-family:var(--font-brand);font-size:1.8rem;background:var(--grad-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Khaana Peena</div>
+        <p style="margin-top:var(--sp-2);font-size:.9rem;">Welcome! Sign in or create an account.</p>
+      </div>
+
+      <!-- TABS -->
+      <div class="auth-tabs">
+        <div class="auth-tab active" id="tab-login" onclick="switchTab('login')">Sign In</div>
+        <div class="auth-tab" id="tab-signup" onclick="switchTab('signup')">Create Account</div>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <div id="panel-login">
+        <form id="login-form" novalidate>
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <div class="input-group">
+              <span class="input-icon">📧</span>
+              <input type="email" id="login-email" placeholder="your@email.com" required/>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="flex justify-between items-center">
+              <label class="form-label">Password</label>
+              <a href="#" style="font-size:.78rem;color:var(--primary);">Forgot password?</a>
+            </div>
+            <div class="input-group">
+              <span class="input-icon">🔒</span>
+              <input type="password" id="login-password" placeholder="Enter your password" required/>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full btn-lg ripple-btn" style="margin-top:var(--sp-4);">Sign In to Khaana Peena</button>
+        </form>
+
+        <div class="divider-text" style="margin:var(--sp-6) 0;">or continue as</div>
+        <button class="btn btn-ghost btn-full" onclick="demoLogin()" style="gap:var(--sp-3);">
+          <span>🎭</span> Demo Account (No signup needed)
+        </button>
+
+        <p style="text-align:center;margin-top:var(--sp-5);font-size:.85rem;color:var(--text-muted);">
+          Don't have an account? <a href="#" onclick="switchTab('signup')">Create one →</a>
+        </p>
+      </div>
+
+      <!-- SIGNUP FORM -->
+      <div id="panel-signup" style="display:none;">
+        <form id="signup-form" novalidate>
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <div class="input-group">
+              <span class="input-icon">👤</span>
+              <input type="text" id="signup-name" placeholder="Ravi Kumar" required/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <div class="input-group">
+              <span class="input-icon">📧</span>
+              <input type="email" id="signup-email" placeholder="your@email.com" required/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <div class="input-group">
+              <span class="input-icon">🔒</span>
+              <input type="password" id="signup-password" placeholder="Min 6 characters" oninput="checkStrength(this.value)" required/>
+            </div>
+            <div class="strength-bar"><div class="strength-fill" id="strength-fill" style="width:0;"></div></div>
+            <div id="strength-text" style="font-size:.75rem;color:var(--text-muted);margin-top:4px;"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirm Password</label>
+            <div class="input-group">
+              <span class="input-icon">🔐</span>
+              <input type="password" id="signup-confirm" placeholder="Repeat password" required/>
+            </div>
+          </div>
+          <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:var(--sp-4);">By signing up you agree to our Terms of Service and Privacy Policy.</p>
+          <button type="submit" class="btn btn-primary btn-full btn-lg ripple-btn">Create Account & Setup Health Profile</button>
+        </form>
+        <p style="text-align:center;margin-top:var(--sp-5);font-size:.85rem;color:var(--text-muted);">
+          Already have an account? <a href="#" onclick="switchTab('login')">Sign in →</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+<script src="js/app.js"></script>
+<script src="js/auth.js"></script>
+<script>
+function switchTab(tab) {
+  document.getElementById('tab-login').classList.toggle('active', tab==='login');
+  document.getElementById('tab-signup').classList.toggle('active', tab==='signup');
+  document.getElementById('panel-login').style.display  = tab==='login'  ? 'block' : 'none';
+  document.getElementById('panel-signup').style.display = tab==='signup' ? 'block' : 'none';
+}
+
+function demoLogin() {
+  const demoUser = { name:'Demo User', email:'demo@khaanapeena.com', id:'demo_001' };
+  KP.save('user', demoUser);
+  const demoProfile = {
+    age:28, gender:'male', weight:72, height:175,
+    conditions:['general'], activityLevel:'moderate',
+    dietType:'vegetarian', spiceTolerance:'medium',
+    gymDays:[], mealTimings:{ breakfast:'8:00 AM', lunch:'1:00 PM', dinner:'8:00 PM' }
+  };
+  KP.save('profile', demoProfile);
+  KP.toast('Welcome, Demo User! 🎉','success');
+  setTimeout(() => window.location.href = 'dashboard.html', 800);
+}
+
+function checkStrength(val) {
+  const fill = document.getElementById('strength-fill');
+  const text = document.getElementById('strength-text');
+  let score = 0;
+  if (val.length >= 6) score++;
+  if (val.length >= 10) score++;
+  if (/[A-Z]/.test(val)) score++;
+  if (/[0-9]/.test(val)) score++;
+  if (/[^a-zA-Z0-9]/.test(val)) score++;
+  const levels = [
+    { w:'0%',    color:'transparent', label:'' },
+    { w:'25%',   color:'var(--danger)',  label:'Weak' },
+    { w:'50%',   color:'var(--warning)', label:'Fair' },
+    { w:'75%',   color:'var(--info)',    label:'Good' },
+    { w:'100%',  color:'var(--accent)',  label:'Strong' },
+  ];
+  const lv = levels[Math.min(score, 4)];
+  fill.style.width = lv.w; fill.style.background = lv.color;
+  text.textContent = lv.label; text.style.color = lv.color;
+}
+</script>
+<div style="text-align: center; padding: 15px; font-weight: bold; background: var(--bg-secondary); color: var(--text-primary); border-top: 1px solid var(--border); width: 100%; position: relative; z-index: 1000; font-size: 1.1rem; letter-spacing: 0.5px;">
+  Made with ❤️ by Avii
+</div>
+</body>
+</html>

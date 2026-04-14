@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Meal Planner — Khaana Peena</title>
+<link rel="stylesheet" href="css/style.css"/>
+<link rel="stylesheet" href="css/components.css"/>
+<link rel="stylesheet" href="css/animations.css"/>
+<style>
+.filter-bar{display:flex;align-items:center;gap:var(--sp-3);flex-wrap:wrap;margin-bottom:var(--sp-6);padding:var(--sp-4);background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-lg);}
+.filter-chip{padding:7px 16px;border:1.5px solid var(--border);border-radius:var(--r-full);font-size:.8rem;font-weight:600;color:var(--text-muted);cursor:pointer;transition:all var(--t-fast);background:transparent;}
+.filter-chip:hover{border-color:var(--border-warm);color:var(--primary);}
+.filter-chip.active{background:rgba(255,107,53,.12);border-color:var(--primary);color:var(--primary);}
+.search-input{flex:1;min-width:200px;background:rgba(255,255,255,.05);border:1.5px solid var(--border);border-radius:var(--r-md);color:var(--text-primary);font-size:.9rem;padding:9px 14px;outline:none;transition:all var(--t-fast);}
+.search-input:focus{border-color:var(--primary);}
+.meal-section-title{font-size:1.1rem;font-weight:700;margin-bottom:var(--sp-4);display:flex;align-items:center;gap:var(--sp-2);}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand"><span class="nav-logo-text">Khaana Peena</span><span class="nav-logo-dot"></span></a>
+    <div class="nav-links">
+      <a href="dashboard.html" class="nav-link">Dashboard</a>
+      <a href="meal-planner.html" class="nav-link active">Meal Planner</a>
+      <a href="chai-studio.html" class="nav-link">☕ Chai Studio</a>
+      <a href="diet-plan.html" class="nav-link">Diet Plan</a>
+    </div>
+    <div class="nav-actions" id="nav-user-area"></div>
+  </div>
+</nav>
+
+<div class="app-layout" style="padding-top:var(--nav-h);">
+  <aside class="sidebar">
+    <div id="sidebar-profile" style="margin-bottom:var(--sp-6);"></div>
+    <div class="sidebar-section">
+      <span class="sidebar-label">Main</span>
+      <a href="dashboard.html" class="sidebar-link"><span class="icon">🏠</span> Dashboard</a>
+      <a href="meal-planner.html" class="sidebar-link active"><span class="icon">🍽️</span> Meal Planner</a>
+      <a href="chai-studio.html" class="sidebar-link"><span class="icon">☕</span> Chai Studio</a>
+      <a href="customize.html" class="sidebar-link"><span class="icon">🎛️</span> Customize Food</a>
+    </div>
+    <div class="sidebar-section">
+      <span class="sidebar-label">Planning</span>
+      <a href="diet-plan.html" class="sidebar-link"><span class="icon">📋</span> Diet Plan</a>
+      <a href="gym-plan.html" class="sidebar-link"><span class="icon">🏋️</span> Gym Plan</a>
+      <a href="order.html" class="sidebar-link"><span class="icon">📦</span> Order Food</a>
+    </div>
+    <div class="sidebar-section">
+      <span class="sidebar-label">Account</span>
+      <a href="profile.html" class="sidebar-link"><span class="icon">👤</span> My Profile</a>
+      <a href="#" class="sidebar-link" onclick="KP.logout()"><span class="icon">🚪</span> Logout</a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header anim-slide-down">
+      <div class="flex justify-between items-center flex-wrap gap-4">
+        <div>
+          <h1 style="font-size:1.8rem;">🍽️ Meal Planner</h1>
+          <p style="margin-top:4px;">Smart suggestions tailored to your health profile</p>
+        </div>
+        <div class="flex gap-3">
+          <button class="btn btn-primary btn-sm ripple-btn" onclick="regeneratePlan()">🔄 Regenerate Plan</button>
+          <a href="order.html" class="btn btn-secondary btn-sm">📦 Order All</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar anim-fade-in">
+      <input type="text" class="search-input" id="meal-search" placeholder="🔍 Search meals... (Poha, Dal, Chicken...)" oninput="filterMeals()"/>
+      <div class="flex gap-2 flex-wrap">
+        <div class="filter-chip active" onclick="setMealFilter('all',this)">All</div>
+        <div class="filter-chip" onclick="setMealFilter('breakfast',this)">☀️ Breakfast</div>
+        <div class="filter-chip" onclick="setMealFilter('lunch',this)">🌤️ Lunch</div>
+        <div class="filter-chip" onclick="setMealFilter('dinner',this)">🌙 Dinner</div>
+        <div class="filter-chip" onclick="setMealFilter('snacks',this)">🍵 Snacks</div>
+        <div class="filter-chip" onclick="setMealFilter('beverages',this)">☕ Drinks</div>
+        <div class="filter-chip" id="filter-health" onclick="setMealFilter('health',this)">🏥 Health Match</div>
+      </div>
+    </div>
+
+    <!-- ACTIVE HEALTH ALERTS -->
+    <div id="health-alerts-summary" style="margin-bottom:var(--sp-5);"></div>
+
+    <!-- MEAL SECTIONS -->
+    <div id="meal-planner-content"></div>
+
+    <!-- MEAL DETAIL MODAL -->
+    <div class="modal-overlay" id="meal-modal">
+      <div class="modal">
+        <div class="modal-header">
+          <h4 id="modal-title">Meal Details</h4>
+          <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
+        <div id="modal-content"></div>
+        <div class="flex gap-3" style="margin-top:var(--sp-6);">
+          <a id="modal-customize-btn" href="#" class="btn btn-primary flex-1">🎛️ Customize</a>
+          <a id="modal-order-btn" href="order.html" class="btn btn-health flex-1">📦 Order This</a>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+<script src="js/app.js"></script>
+<script src="js/meal-data.js"></script>
+<script src="js/health-engine.js"></script>
+<script>
+let currentFilter = 'all';
+let profile = {};
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (!KP.requireAuth()) return;
+  profile = KP.getProfile() || {};
+
+  // Health alerts
+  if (profile.conditions?.length && !profile.conditions.includes('general')) {
+    const alertEl = document.getElementById('health-alerts-summary');
+    const icons   = { diabetes:'🩸', hypertension:'❤️', thyroid:'🦋', 'weight-loss':'⚖️', gym:'🏋️', lactoseIntolerant:'🥛', glutenFree:'🌾', pregnancy:'🤰' };
+    alertEl.innerHTML = `<div class="health-alert safe anim-fade-in"><span class="alert-icon">✅</span><div>Meals filtered for: ${profile.conditions.map(c=>`<span class="badge badge-green" style="margin-left:4px;">${icons[c]||''}  ${c.replace(/-/g,' ')}</span>`).join('')}</div></div>`;
+  }
+
+  renderMeals();
+  KP.initReveal();
+});
+
+function renderMeals() {
+  const content = document.getElementById('meal-planner-content');
+  const search  = document.getElementById('meal-search').value.toLowerCase();
+  content.innerHTML = '';
+
+  const sections = currentFilter === 'all'
+    ? ['breakfast','lunch','dinner','snacks','beverages']
+    : currentFilter === 'health' ? ['breakfast','lunch','dinner']
+    : [currentFilter];
+
+  const catLabels = { breakfast:'☀️ Breakfast', lunch:'🌤️ Lunch', dinner:'🌙 Dinner', snacks:'🍵 Snacks', beverages:'☕ Beverages' };
+
+  sections.forEach(cat => {
+    let foods = HealthEngine.getSuggestions(cat, profile, 12);
+    if (search) foods = foods.filter(f => f.name.toLowerCase().includes(search) || f.desc?.toLowerCase().includes(search) || f.hindi?.includes(search));
+    if (!foods.length) return;
+
+    const sec = document.createElement('div');
+    sec.style.marginBottom = 'var(--sp-8)';
+
+    const titleEl = document.createElement('div');
+    titleEl.className = 'meal-section-title';
+    titleEl.innerHTML = `${catLabels[cat]}<span style="font-size:.78rem;color:var(--text-muted);font-weight:400;">(${foods.length} options)</span>`;
+    sec.appendChild(titleEl);
+
+    const grid = document.createElement('div');
+    grid.className = 'grid grid-auto';
+    foods.forEach(food => {
+      const badge = HealthEngine.getScoreBadge(food.score || food.healthScore || 75);
+      const card = document.createElement('div');
+      card.className = 'meal-card reveal';
+      card.onclick = () => openMealModal(food);
+      card.innerHTML = `
+        <div class="meal-card-emoji">${food.emoji}</div>
+        <div class="meal-card-body">
+          <div class="meal-card-name">${food.name} <span style="font-size:.75rem;color:var(--text-muted);">${food.hindi||''}</span></div>
+          <div class="meal-card-desc">${food.desc}</div>
+          <!-- WARNINGS -->
+          ${food.warnings?.length ? `<div class="health-alert warn" style="padding:var(--sp-2) var(--sp-3);font-size:.75rem;margin-bottom:var(--sp-2);">⚠️ ${food.warnings[0].msg}</div>` : ''}
+          <!-- POSITIVES -->
+          ${food.positives?.length && !food.warnings?.length ? `<div class="health-alert safe" style="padding:var(--sp-2) var(--sp-3);font-size:.75rem;margin-bottom:var(--sp-2);">✅ ${food.positives[0]}</div>` : ''}
+          <div class="meal-card-footer">
+            <span class="meal-card-cals">🔥 ${food.calories} kcal</span>
+            <span class="badge ${badge.cls}">${badge.label} ${food.score||food.healthScore}</span>
+          </div>
+          <div class="flex gap-2" style="margin-top:var(--sp-3);">
+            <a href="customize.html?food=${food.id}" class="btn btn-ghost btn-sm flex-1" onclick="event.stopPropagation()">🎛️</a>
+            <button class="btn btn-health btn-sm flex-1" onclick="event.stopPropagation();addToOrder('${food.id}')">+ Order</button>
+          </div>
+        </div>`;
+      grid.appendChild(card);
+    });
+    sec.appendChild(grid);
+    content.appendChild(sec);
+  });
+
+  if (!content.innerHTML) {
+    content.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><h5 class="empty-title">No meals found</h5><p class="empty-desc">Try a different search or filter</p></div>`;
+  }
+
+  KP.initReveal();
+}
+
+function filterMeals() { renderMeals(); }
+function setMealFilter(f, el) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderMeals();
+}
+
+function regeneratePlan() {
+  KP.toast('🔄 Regenerating your personal meal plan...','info');
+  document.querySelectorAll('.meal-card').forEach(c => { c.style.opacity='0.4'; c.style.transform='scale(.95)'; });
+  setTimeout(() => { renderMeals(); KP.toast('✅ Fresh plan ready!','success'); }, 900);
+}
+
+function openMealModal(food) {
+  const modal = document.getElementById('meal-modal');
+  document.getElementById('modal-title').textContent = `${food.emoji} ${food.name}`;
+  document.getElementById('modal-customize-btn').href = `customize.html?food=${food.id}`;
+
+  const badge = HealthEngine.getScoreBadge(food.score || food.healthScore || 75);
+  document.getElementById('modal-content').innerHTML = `
+    <div style="display:flex;gap:var(--sp-4);margin-bottom:var(--sp-5);flex-wrap:wrap;">
+      ${HealthEngine.renderHealthRing(food.score || food.healthScore, 64)}
+      <div>
+        <div class="badge ${badge.cls}" style="margin-bottom:var(--sp-2);">${badge.label}</div>
+        <p style="font-size:.88rem;">${food.desc}</p>
+        <div class="flex gap-2 flex-wrap" style="margin-top:var(--sp-3);">
+          ${food.isVeg ? '<span class="badge badge-green">🌿 Veg</span>' : '<span class="badge badge-red">🍗 Non-Veg</span>'}
+          ${food.isGlutenFree ? '<span class="badge badge-blue">🌾 GF</span>' : ''}
+          ${food.isVegan ? '<span class="badge badge-green">🌱 Vegan</span>' : ''}
+        </div>
+      </div>
+    </div>
+    <div class="nutrition-grid" style="margin-bottom:var(--sp-5);">
+      <div class="nutrition-item"><div class="nutrition-val grad-text">${food.calories}</div><div class="nutrition-label">Calories</div></div>
+      <div class="nutrition-item"><div class="nutrition-val" style="color:var(--accent);">${food.protein}g</div><div class="nutrition-label">Protein</div></div>
+      <div class="nutrition-item"><div class="nutrition-val" style="color:var(--warning);">${food.carbs}g</div><div class="nutrition-label">Carbs</div></div>
+      <div class="nutrition-item"><div class="nutrition-val" style="color:var(--info);">${food.fat}g</div><div class="nutrition-label">Fat</div></div>
+    </div>
+    ${food.warnings?.map(w=>`<div class="health-alert ${w.type==='danger'?'danger':'warn'}"><span class="alert-icon">⚠️</span>${w.msg}</div>`).join('')||''}
+    ${food.positives?.map(p=>`<div class="health-alert safe"><span class="alert-icon">✅</span>${p}</div>`).join('')||''}
+    <div style="margin-top:var(--sp-4);">
+      <div style="font-size:.8rem;color:var(--text-muted);margin-bottom:var(--sp-2);">⏱️ Prep time: ${food.prepTime} min · 🌶️ Spice: ${'🌶️'.repeat(food.spice||0)||'None'}</div>
+    </div>`;
+
+  modal.classList.add('show');
+}
+
+function closeModal() { document.getElementById('meal-modal').classList.remove('show'); }
+document.getElementById('meal-modal').addEventListener('click', e => { if(e.target.id==='meal-modal') closeModal(); });
+
+function addToOrder(foodId) {
+  const food = ALL_FOODS.find(f => f.id === foodId);
+  if (!food) return;
+  const cart = KP.load('cart', []);
+  cart.push({ ...food, addedAt: new Date().toISOString(), customizations:[] });
+  KP.save('cart', cart);
+  KP.toast(`✅ ${food.name} added to order!`,'success');
+}
+</script>
+<div style="text-align: center; padding: 15px; font-weight: bold; background: var(--bg-secondary); color: var(--text-primary); border-top: 1px solid var(--border); width: 100%; position: relative; z-index: 1000; font-size: 1.1rem; letter-spacing: 0.5px;">
+  Made with ❤️ by Avii
+</div>
+</body>
+</html>

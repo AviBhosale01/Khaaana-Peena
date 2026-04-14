@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Order — Khaana Peena</title>
+<link rel="stylesheet" href="css/style.css"/>
+<link rel="stylesheet" href="css/components.css"/>
+<link rel="stylesheet" href="css/animations.css"/>
+<style>
+.cart-item{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-xl);padding:var(--sp-5);display:flex;align-items:center;gap:var(--sp-4);transition:all var(--t-normal);}
+.cart-item:hover{border-color:var(--border-warm);}
+.cart-emoji{font-size:2.5rem;width:60px;height:60px;display:flex;align-items:center;justify-content:center;background:var(--grad-card);border-radius:var(--r-md);flex-shrink:0;}
+.cart-info{flex:1;min-width:0;}
+.cart-name{font-weight:700;font-size:.95rem;margin-bottom:4px;}
+.cart-detail{font-size:.78rem;color:var(--text-muted);}
+.remove-btn{width:32px;height:32px;border-radius:50%;background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.3);color:var(--danger);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all var(--t-fast);font-size:.9rem;}
+.remove-btn:hover{background:rgba(231,76,60,.25);}
+.order-summary-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-xl);padding:var(--sp-6);position:sticky;top:calc(var(--nav-h) + var(--sp-4));}
+.summary-row{display:flex;justify-content:space-between;align-items:center;padding:var(--sp-3) 0;border-bottom:1px solid var(--border);font-size:.9rem;}
+.summary-row:last-of-type{border-bottom:none;}
+.summary-total{display:flex;justify-content:space-between;align-items:center;padding:var(--sp-4) 0;font-size:1.05rem;font-weight:700;border-top:2px solid var(--border-warm);margin-top:var(--sp-2);}
+.delivery-option{border:1.5px solid var(--border);border-radius:var(--r-md);padding:var(--sp-4);cursor:pointer;transition:all var(--t-fast);}
+.delivery-option:hover{border-color:var(--border-warm);}
+.delivery-option.selected{border-color:var(--primary);background:rgba(255,107,53,.08);}
+/* SUCCESS */
+.success-overlay{position:fixed;inset:0;background:rgba(8,8,15,.95);backdrop-filter:blur(20px);z-index:5000;display:flex;align-items:center;justify-content:center;padding:var(--sp-6);opacity:0;pointer-events:none;transition:opacity var(--t-slow);}
+.success-overlay.show{opacity:1;pointer-events:all;}
+.success-card{background:var(--bg-card);border:1px solid var(--border-health);border-radius:var(--r-2xl);padding:var(--sp-10);max-width:520px;width:100%;text-align:center;transform:scale(.9);transition:transform var(--t-slow);}
+.success-overlay.show .success-card{transform:scale(1);}
+.success-icon-wrap{width:100px;height:100px;border-radius:50%;background:var(--grad-health);display:flex;align-items:center;justify-content:center;font-size:3rem;margin:0 auto var(--sp-6);box-shadow:var(--shadow-health);}
+.order-id-box{background:var(--bg-card-2);border:1px dashed var(--border-warm);border-radius:var(--r-lg);padding:var(--sp-4);margin:var(--sp-5) 0;font-family:monospace;font-size:1.1rem;color:var(--primary);letter-spacing:.12em;}
+.tracking-step{display:flex;align-items:center;gap:var(--sp-3);padding:var(--sp-3) 0;}
+.tracking-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
+.tracking-dot.done{background:var(--accent);box-shadow:0 0 8px var(--accent);}
+.tracking-dot.pending{background:rgba(255,255,255,.15);}
+.tracking-line{width:2px;height:28px;background:var(--border);margin-left:5px;}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand"><span class="nav-logo-text">Khaana Peena</span><span class="nav-logo-dot"></span></a>
+    <div class="nav-links">
+      <a href="dashboard.html" class="nav-link">Dashboard</a>
+      <a href="meal-planner.html" class="nav-link">Meal Planner</a>
+      <a href="order.html" class="nav-link active">Order</a>
+    </div>
+    <div class="nav-actions" id="nav-user-area"></div>
+  </div>
+</nav>
+
+<div class="app-layout" style="padding-top:var(--nav-h);">
+  <aside class="sidebar">
+    <div id="sidebar-profile" style="margin-bottom:var(--sp-6);"></div>
+    <div class="sidebar-section">
+      <span class="sidebar-label">Main</span>
+      <a href="dashboard.html" class="sidebar-link"><span class="icon">🏠</span> Dashboard</a>
+      <a href="meal-planner.html" class="sidebar-link"><span class="icon">🍽️</span> Meal Planner</a>
+      <a href="chai-studio.html" class="sidebar-link"><span class="icon">☕</span> Chai Studio</a>
+      <a href="customize.html" class="sidebar-link"><span class="icon">🎛️</span> Customize Food</a>
+    </div>
+    <div class="sidebar-section">
+      <span class="sidebar-label">Planning</span>
+      <a href="diet-plan.html" class="sidebar-link"><span class="icon">📋</span> Diet Plan</a>
+      <a href="gym-plan.html" class="sidebar-link"><span class="icon">🏋️</span> Gym Plan</a>
+      <a href="order.html" class="sidebar-link active"><span class="icon">📦</span> Order Food</a>
+    </div>
+    <div class="sidebar-section">
+      <a href="profile.html" class="sidebar-link"><span class="icon">👤</span> My Profile</a>
+      <a href="#" class="sidebar-link" onclick="KP.logout()"><span class="icon">🚪</span> Logout</a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header anim-slide-down">
+      <div class="flex justify-between items-center flex-wrap gap-4">
+        <div>
+          <h1 style="font-size:1.8rem;">📦 Your Order</h1>
+          <p style="margin-top:4px;">Review your health-customized meal order</p>
+        </div>
+        <a href="meal-planner.html" class="btn btn-secondary btn-sm">+ Add More</a>
+      </div>
+    </div>
+
+    <!-- HEALTH NOTE BANNER -->
+    <div id="health-note" class="health-alert safe anim-fade-in" style="margin-bottom:var(--sp-6);">
+      <span class="alert-icon">🏥</span>
+      <div id="health-note-text">Your meals are prepared with your health profile in mind.</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 340px;gap:var(--sp-6);align-items:start;" id="order-layout">
+
+      <!-- CART ITEMS -->
+      <div>
+        <!-- EMPTY STATE -->
+        <div id="empty-cart" style="display:none;">
+          <div class="empty-state" style="min-height:40vh;">
+            <div class="empty-icon">🍽️</div>
+            <h5 class="empty-title">Your order is empty</h5>
+            <p class="empty-desc">Browse the meal planner and add health-conscious meals to your order</p>
+            <a href="meal-planner.html" class="btn btn-primary ripple-btn" style="margin-top:var(--sp-4);">Browse Meals</a>
+          </div>
+        </div>
+
+        <!-- CART LIST -->
+        <div id="cart-list" style="display:flex;flex-direction:column;gap:var(--sp-4);">
+          <!-- Items injected by JS -->
+        </div>
+
+        <!-- QUICK ADD SECTION -->
+        <div id="quick-add-section" style="margin-top:var(--sp-8);">
+          <h4 style="margin-bottom:var(--sp-4);">⚡ Quick Add — Suggested for You</h4>
+          <div class="grid grid-3" id="quick-add-grid" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr));"></div>
+        </div>
+
+        <!-- DELIVERY DETAILS -->
+        <div class="glass-card anim-fade-in" style="margin-top:var(--sp-8);" id="delivery-section">
+          <h4 style="margin-bottom:var(--sp-5);">🚗 Delivery Details</h4>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Full Name</label>
+              <input type="text" id="del-name" placeholder="Your name"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Phone</label>
+              <input type="tel" id="del-phone" placeholder="+91 98765 43210"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Delivery Address</label>
+            <textarea id="del-address" rows="2" placeholder="Flat No, Street, Area, City, PIN..."></textarea>
+          </div>
+
+          <!-- DELIVERY TYPE -->
+          <div class="form-group">
+            <label class="form-label">Delivery Type</label>
+            <div class="flex gap-3">
+              <div class="delivery-option flex-1 selected" id="del-asap" onclick="selectDelivery('asap')">
+                <div style="font-size:1.3rem;margin-bottom:4px;">⚡</div>
+                <div style="font-weight:700;font-size:.88rem;">ASAP</div>
+                <div style="font-size:.75rem;color:var(--text-muted);">30-45 mins</div>
+              </div>
+              <div class="delivery-option flex-1" id="del-sched" onclick="selectDelivery('scheduled')">
+                <div style="font-size:1.3rem;margin-bottom:4px;">📅</div>
+                <div style="font-weight:700;font-size:.88rem;">Scheduled</div>
+                <div style="font-size:.75rem;color:var(--text-muted);">Pick a time</div>
+              </div>
+              <div class="delivery-option flex-1" id="del-pickup" onclick="selectDelivery('pickup')">
+                <div style="font-size:1.3rem;margin-bottom:4px;">🏃</div>
+                <div style="font-weight:700;font-size:.88rem;">Self Pickup</div>
+                <div style="font-size:.75rem;color:var(--text-muted);">15-20 mins</div>
+              </div>
+            </div>
+          </div>
+
+          <div id="sched-time" style="display:none;">
+            <div class="form-group">
+              <label class="form-label">Schedule For</label>
+              <input type="datetime-local" id="delivery-time"/>
+            </div>
+          </div>
+
+          <!-- SPECIAL INSTRUCTIONS -->
+          <div class="form-group">
+            <label class="form-label">Special Health Instructions</label>
+            <textarea id="special-instr" rows="2" placeholder="E.g. Less oil, no garlic, extra ginger, low salt..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- ORDER SUMMARY -->
+      <div>
+        <div class="order-summary-card anim-scale-in">
+          <h5 style="margin-bottom:var(--sp-5);">🧾 Order Summary</h5>
+
+          <!-- NUTRITION SUMMARY -->
+          <div style="background:var(--bg-card-2);border-radius:var(--r-md);padding:var(--sp-4);margin-bottom:var(--sp-5);">
+            <div style="font-size:.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:var(--sp-3);">Total Nutrition</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-3);">
+              <div style="text-align:center;"><div id="sum-cal" style="font-size:1.4rem;font-weight:800;" class="grad-text">0</div><div style="font-size:.68rem;color:var(--text-muted);">Calories</div></div>
+              <div style="text-align:center;"><div id="sum-prot" style="font-size:1.4rem;font-weight:800;color:var(--accent);">0g</div><div style="font-size:.68rem;color:var(--text-muted);">Protein</div></div>
+              <div style="text-align:center;"><div id="sum-carb" style="font-size:1.4rem;font-weight:800;color:var(--warning);">0g</div><div style="font-size:.68rem;color:var(--text-muted);">Carbs</div></div>
+              <div style="text-align:center;"><div id="sum-fat" style="font-size:1.4rem;font-weight:800;color:var(--info);">0g</div><div style="font-size:.68rem;color:var(--text-muted);">Fat</div></div>
+            </div>
+          </div>
+
+          <!-- HEALTH SCORE -->
+          <div id="order-health-score" style="margin-bottom:var(--sp-5);text-align:center;"></div>
+
+          <!-- PRICE BREAKDOWN -->
+          <div id="price-rows"></div>
+          <div class="summary-total">
+            <span>Total</span>
+            <span class="grad-text" id="grand-total">₹0</span>
+          </div>
+
+          <!-- PAYMENT -->
+          <div style="margin-top:var(--sp-5);">
+            <div style="font-size:.8rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:var(--sp-3);">Payment Method</div>
+            <div class="flex gap-2 flex-wrap">
+              <button class="filter-chip active" id="pay-upi" onclick="selectPay('upi',this)">📱 UPI</button>
+              <button class="filter-chip" id="pay-card" onclick="selectPay('card',this)">💳 Card</button>
+              <button class="filter-chip" id="pay-cod" onclick="selectPay('cod',this)">💵 Cash</button>
+            </div>
+          </div>
+
+          <button class="btn btn-primary btn-full btn-lg ripple-btn" style="margin-top:var(--sp-6);" onclick="placeOrder()">
+            🎉 Place Order
+          </button>
+
+          <p style="text-align:center;font-size:.75rem;color:var(--text-muted);margin-top:var(--sp-3);">
+            🏥 Your health profile is attached to this order. The kitchen will adjust preparation accordingly.
+          </p>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ORDER SUCCESS OVERLAY -->
+<div class="success-overlay" id="success-overlay">
+  <div class="success-card anim-bounce-in">
+    <div class="success-icon-wrap">✅</div>
+    <h2 style="margin-bottom:var(--sp-3);">Order Placed! 🎉</h2>
+    <p style="margin-bottom:var(--sp-4);">Your health-conscious meal is being prepared. The kitchen has your health profile!</p>
+
+    <div class="order-id-box" id="order-id-display">KP-000000</div>
+
+    <!-- TRACKING -->
+    <div style="text-align:left;margin:var(--sp-5) 0;background:var(--bg-card-2);padding:var(--sp-5);border-radius:var(--r-lg);">
+      <div style="font-weight:700;font-size:.9rem;margin-bottom:var(--sp-4);">🚴 Live Tracking</div>
+      <div class="tracking-step"><div class="tracking-dot done"></div><span style="font-size:.85rem;">Order confirmed</span><span style="margin-left:auto;font-size:.75rem;color:var(--accent);">✅</span></div>
+      <div class="tracking-line"></div>
+      <div class="tracking-step" id="track-prep"><div class="tracking-dot done"></div><span style="font-size:.85rem;">Kitchen preparing</span><span style="margin-left:auto;font-size:.75rem;color:var(--accent);">✅</span></div>
+      <div class="tracking-line"></div>
+      <div class="tracking-step" id="track-out"><div class="tracking-dot pending"></div><span style="font-size:.85rem;color:var(--text-muted);">Out for delivery</span></div>
+      <div class="tracking-line"></div>
+      <div class="tracking-step" id="track-del"><div class="tracking-dot pending"></div><span style="font-size:.85rem;color:var(--text-muted);">Delivered</span></div>
+    </div>
+
+    <!-- HEALTH NOTE ON ORDER -->
+    <div id="success-health-note" class="health-alert safe" style="text-align:left;margin-bottom:var(--sp-5);">
+      <span class="alert-icon">🏥</span>
+      <div id="success-health-text">Prepared with your health profile in mind.</div>
+    </div>
+
+    <div class="flex gap-3">
+      <a href="dashboard.html" class="btn btn-primary flex-1 ripple-btn">Go to Dashboard</a>
+      <a href="meal-planner.html" class="btn btn-ghost flex-1">Order Again</a>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+<script src="js/app.js"></script>
+<script src="js/meal-data.js"></script>
+<script src="js/health-engine.js"></script>
+<script>
+let cart    = [];
+let profile = {};
+let payMethod = 'upi';
+let delivType = 'asap';
+const PRICES = { default: 89, premium: 149, beverage: 49 };
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (!KP.requireAuth()) return;
+  profile = KP.getProfile() || {};
+  cart    = KP.load('cart', []);
+
+  // Pre-fill delivery name from user
+  const user = KP.getUser();
+  if (user?.name) document.getElementById('del-name').value = user.name;
+
+  // Health note
+  const conditions = profile.conditions || [];
+  if (conditions.length && !conditions.includes('general')) {
+    const conds = conditions.map(c => c.replace(/-/g,' ')).join(', ');
+    document.getElementById('health-note-text').textContent = `Your order is tagged with: ${conds}. Kitchen will prepare accordingly — lower sugar, reduced sodium, etc.`;
+  }
+
+  // Health note on success screen
+  if (conditions.includes('diabetes')) {
+    document.getElementById('success-health-text').textContent = 'Sugar reduced per your diabetes profile. Enjoy!';
+  } else if (conditions.includes('hypertension')) {
+    document.getElementById('success-health-text').textContent = 'Sodium reduced. Heart-healthy preparation confirmed.';
+  }
+
+  renderCart();
+  renderQuickAdd();
+});
+
+function renderCart() {
+  const listEl  = document.getElementById('cart-list');
+  const emptyEl = document.getElementById('empty-cart');
+
+  if (!cart.length) {
+    listEl.style.display  = 'none';
+    emptyEl.style.display = 'block';
+    document.getElementById('delivery-section').style.display = 'none';
+    document.getElementById('quick-add-section').style.marginTop = '0';
+    updateSummary();
+    return;
+  }
+
+  listEl.style.display  = 'flex';
+  emptyEl.style.display = 'none';
+
+  listEl.innerHTML = cart.map((item, idx) => {
+    const price = item.isBeverage ? PRICES.beverage : (item.healthScore >= 85 ? PRICES.premium : PRICES.default);
+    const customText = item.customizations?.length
+      ? `Custom: ${item.customizations.filter(c => typeof c === 'string').join(', ') || 'Adjusted ingredients'}`
+      : item.isBeverage ? `Beverage · ${item.calories || 80} kcal` : 'Standard preparation';
+    return `
+    <div class="cart-item reveal" data-idx="${idx}">
+      <div class="cart-emoji">${item.emoji || '🍽️'}</div>
+      <div class="cart-info">
+        <div class="cart-name">${item.name}</div>
+        <div class="cart-detail">${customText}</div>
+        <div class="flex gap-2 items-center" style="margin-top:var(--sp-2);">
+          <span class="badge badge-primary">🔥 ${item.calories || '--'} kcal</span>
+          ${item.isBeverage ? '<span class="badge badge-blue">☕ Beverage</span>' : '<span class="badge badge-green">🍽️ Meal</span>'}
+        </div>
+        ${item.customizations?.length ? `<div style="font-size:.72rem;color:var(--accent);margin-top:4px;">✅ Health-customized</div>` : ''}
+      </div>
+      <div class="flex flex-col items-end gap-3">
+        <div style="font-weight:800;color:var(--primary);">₹${price}</div>
+        <button class="remove-btn" onclick="removeItem(${idx})">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  KP.initReveal();
+  updateSummary();
+}
+
+function removeItem(idx) {
+  cart.splice(idx, 1);
+  KP.save('cart', cart);
+  KP.toast('Item removed','info');
+  renderCart();
+}
+
+function updateSummary() {
+  let totalCal = 0, totalProt = 0, totalCarb = 0, totalFat = 0, subtotal = 0;
+  cart.forEach(item => {
+    totalCal  += item.calories  || 0;
+    totalProt += item.protein   || 0;
+    totalCarb += item.carbs     || 0;
+    totalFat  += item.fat       || 0;
+    subtotal  += item.isBeverage ? PRICES.beverage : (item.healthScore >= 85 ? PRICES.premium : PRICES.default);
+  });
+
+  document.getElementById('sum-cal').textContent  = totalCal;
+  document.getElementById('sum-prot').textContent = totalProt + 'g';
+  document.getElementById('sum-carb').textContent = totalCarb + 'g';
+  document.getElementById('sum-fat').textContent  = totalFat  + 'g';
+
+  const delivery = cart.length ? (delivType === 'pickup' ? 0 : 29) : 0;
+  const tax      = Math.round(subtotal * 0.05);
+  const total    = subtotal + delivery + tax;
+
+  document.getElementById('price-rows').innerHTML = `
+    <div class="summary-row"><span>Subtotal (${cart.length} items)</span><span>₹${subtotal}</span></div>
+    <div class="summary-row"><span>${delivType==='pickup'?'Self Pickup':'Delivery Charge'}</span><span>${delivery===0?'Free':'₹'+delivery}</span></div>
+    <div class="summary-row"><span>GST (5%)</span><span>₹${tax}</span></div>`;
+  document.getElementById('grand-total').textContent = '₹' + total;
+
+  // Health score for order
+  if (cart.length) {
+    const avgScore = cart.reduce((a, item) => a + (item.healthScore || item.score || 80), 0) / cart.length;
+    const badge    = HealthEngine.getScoreBadge(Math.round(avgScore));
+    document.getElementById('order-health-score').innerHTML = `
+      <div style="display:flex;align-items:center;gap:var(--sp-3);justify-content:center;">
+        ${HealthEngine.renderHealthRing(Math.round(avgScore), 52)}
+        <div><div style="font-size:.8rem;color:var(--text-muted);">Order Health Score</div><span class="badge ${badge.cls}" style="margin-top:4px;">${badge.label}</span></div>
+      </div>`;
+  }
+}
+
+function renderQuickAdd() {
+  const suggestions = HealthEngine.getSuggestions('snacks', profile, 6);
+  const grid = document.getElementById('quick-add-grid');
+  grid.innerHTML = suggestions.map(f => `
+    <div class="meal-card hover-lift" style="cursor:pointer;" onclick="quickAdd('${f.id}')">
+      <div class="meal-card-emoji" style="min-height:90px;font-size:2.5rem;">${f.emoji}</div>
+      <div class="meal-card-body" style="padding:var(--sp-3);">
+        <div class="meal-card-name" style="font-size:.88rem;">${f.name}</div>
+        <div class="meal-card-footer">
+          <span style="font-size:.75rem;color:var(--primary);">₹${PRICES.default}</span>
+          <button class="btn btn-health btn-sm" onclick="event.stopPropagation();quickAdd('${f.id}')">+</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function quickAdd(foodId) {
+  const food = ALL_FOODS.find(f => f.id === foodId);
+  if (!food) return;
+  cart.push({ ...food, customizations: [], addedAt: new Date().toISOString() });
+  KP.save('cart', cart);
+  KP.toast(`✅ ${food.name} added!`, 'success');
+  renderCart();
+}
+
+function selectPay(method, btn) {
+  payMethod = method;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function selectDelivery(type) {
+  delivType = type;
+  ['asap','sched','pickup'].forEach(id => document.getElementById('del-'+id)?.classList.remove('selected'));
+  const el = document.getElementById('del-' + (type==='scheduled'?'sched':type));
+  if (el) el.classList.add('selected');
+  document.getElementById('sched-time').style.display = type === 'scheduled' ? 'block' : 'none';
+  updateSummary();
+}
+
+function placeOrder() {
+  if (!cart.length) { KP.toast('Add items to your order first','warning'); return; }
+
+  const name = document.getElementById('del-name').value.trim();
+  const phone = document.getElementById('del-phone').value.trim();
+  if (delivType !== 'pickup' && (!name || !phone)) {
+    KP.toast('Please fill in delivery details','warning');
+    return;
+  }
+
+  const btn = document.querySelector('[onclick="placeOrder()"]');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner spinner-sm"></span> Placing order...';
+
+  setTimeout(() => {
+    const orderId = 'KP-' + Math.random().toString(36).substr(2,6).toUpperCase();
+    document.getElementById('order-id-display').textContent = orderId;
+
+    // Save order history
+    const history = KP.load('order_history', []);
+    history.unshift({
+      id: orderId,
+      items: cart,
+      profile: { conditions: profile.conditions },
+      total: document.getElementById('grand-total').textContent,
+      method: payMethod,
+      delivery: delivType,
+      placedAt: new Date().toISOString()
+    });
+    KP.save('order_history', history);
+
+    // Clear cart
+    KP.save('cart', []);
+
+    // Show success
+    document.getElementById('success-overlay').classList.add('show');
+    KP.confetti();
+
+    // Simulate tracking progress
+    setTimeout(() => {
+      document.getElementById('track-out').querySelector('.tracking-dot').classList.replace('pending','done');
+      document.getElementById('track-out').querySelector('span').style.color = 'var(--text-primary)';
+    }, 3000);
+    setTimeout(() => {
+      document.getElementById('track-del').querySelector('.tracking-dot').classList.replace('pending','done');
+      document.getElementById('track-del').querySelector('span').style.color = 'var(--text-primary)';
+      KP.toast('🎉 Your order has been delivered!','success');
+    }, 6000);
+
+  }, 1500);
+}
+</script>
+<div style="text-align: center; padding: 15px; font-weight: bold; background: var(--bg-secondary); color: var(--text-primary); border-top: 1px solid var(--border); width: 100%; position: relative; z-index: 1000; font-size: 1.1rem; letter-spacing: 0.5px;">
+  Made with ❤️ by Avii
+</div>
+</body>
+</html>

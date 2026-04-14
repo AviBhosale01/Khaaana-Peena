@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Gym Plan — Khaana Peena</title>
+<link rel="stylesheet" href="css/style.css"/>
+<link rel="stylesheet" href="css/components.css"/>
+<link rel="stylesheet" href="css/animations.css"/>
+<style>
+.workout-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-xl);padding:var(--sp-5);transition:all var(--t-normal);cursor:pointer;}
+.workout-card:hover{border-color:var(--border-warm);}
+.workout-card.active{border-color:var(--primary);background:rgba(255,107,53,.06);}
+.workout-card.rest-day{border-color:var(--border-health);background:rgba(46,204,113,.04);}
+.day-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted);margin-bottom:var(--sp-2);}
+.workout-type{font-size:1.1rem;font-weight:700;margin-bottom:var(--sp-2);}
+.pre-post-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-xl);padding:var(--sp-5);}
+.pre-post-card h5{margin-bottom:var(--sp-4);}
+.meal-suggest{display:flex;align-items:start;gap:var(--sp-3);padding:var(--sp-3) 0;border-bottom:1px solid var(--border);}
+.meal-suggest:last-child{border-bottom:none;}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand"><span class="nav-logo-text">Khaana Peena</span><span class="nav-logo-dot"></span></a>
+    <div class="nav-links">
+      <a href="dashboard.html" class="nav-link">Dashboard</a>
+      <a href="meal-planner.html" class="nav-link">Meal Planner</a>
+      <a href="gym-plan.html" class="nav-link active">Gym Plan</a>
+    </div>
+    <div class="nav-actions" id="nav-user-area"></div>
+  </div>
+</nav>
+
+<div class="app-layout" style="padding-top:var(--nav-h);">
+  <aside class="sidebar">
+    <div id="sidebar-profile" style="margin-bottom:var(--sp-6);"></div>
+    <div class="sidebar-section">
+      <span class="sidebar-label">Main</span>
+      <a href="dashboard.html" class="sidebar-link"><span class="icon">🏠</span> Dashboard</a>
+      <a href="meal-planner.html" class="sidebar-link"><span class="icon">🍽️</span> Meal Planner</a>
+      <a href="chai-studio.html" class="sidebar-link"><span class="icon">☕</span> Chai Studio</a>
+    </div>
+    <div class="sidebar-section">
+      <span class="sidebar-label">Planning</span>
+      <a href="diet-plan.html" class="sidebar-link"><span class="icon">📋</span> Diet Plan</a>
+      <a href="gym-plan.html" class="sidebar-link active"><span class="icon">🏋️</span> Gym Plan</a>
+      <a href="order.html" class="sidebar-link"><span class="icon">📦</span> Order</a>
+    </div>
+    <div class="sidebar-section">
+      <a href="profile.html" class="sidebar-link"><span class="icon">👤</span> My Profile</a>
+      <a href="#" class="sidebar-link" onclick="KP.logout()"><span class="icon">🚪</span> Logout</a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header anim-slide-down">
+      <h1 style="font-size:1.8rem;">🏋️ Gym Plan + Meal Sync</h1>
+      <p style="margin-top:4px;">Fuel your workouts with the right food at the right time</p>
+    </div>
+
+    <!-- CALORIE ADJUSTMENT ALERT -->
+    <div id="gym-alert" class="health-alert safe anim-fade-in" style="margin-bottom:var(--sp-6);">
+      <span class="alert-icon">💪</span>
+      <div><strong>Gym Mode Active:</strong> Your calorie targets are adjusted for your workout schedule. Pre and post-workout meals are optimized for performance and recovery.</div>
+    </div>
+
+    <!-- CALORIE STATS FOR GYM -->
+    <div class="grid grid-4 anim-slide-up" style="margin-bottom:var(--sp-8);">
+      <div class="stat-card"><div class="stat-icon">🔥</div><div class="stat-value grad-text" id="gym-cal">--</div><div class="stat-label">Daily Calories (Gym)</div></div>
+      <div class="stat-card"><div class="stat-icon">💪</div><div class="stat-value" style="color:var(--accent);" id="gym-protein">--g</div><div class="stat-label">Protein Target</div></div>
+      <div class="stat-card"><div class="stat-icon">⚡</div><div class="stat-value" style="color:var(--warning);" id="gym-carbs">--g</div><div class="stat-label">Carbs (Fuel)</div></div>
+      <div class="stat-card"><div class="stat-icon">🏆</div><div class="stat-value" style="color:var(--info);" id="gym-days-count">0</div><div class="stat-label">Training Days/Week</div></div>
+    </div>
+
+    <!-- WORKOUT SCHEDULE -->
+    <div style="margin-bottom:var(--sp-8);">
+      <div class="flex justify-between items-center" style="margin-bottom:var(--sp-5);">
+        <h4>📅 Set Your Weekly Workout Schedule</h4>
+        <button class="btn btn-primary btn-sm ripple-btn" onclick="saveGymSchedule()">💾 Save Schedule</button>
+      </div>
+      <div class="grid grid-auto" id="schedule-grid" style="grid-template-columns:repeat(7,1fr);gap:var(--sp-3);"></div>
+    </div>
+
+    <!-- PRE / POST WORKOUT MEALS -->
+    <div class="grid grid-2" style="margin-bottom:var(--sp-8);">
+      <div class="pre-post-card reveal">
+        <h5>⚡ Pre-Workout Meals <span class="badge badge-yellow">30-60 min before</span></h5>
+        <div id="pre-workout-meals"></div>
+        <div class="health-alert safe" style="margin-top:var(--sp-4);"><span class="alert-icon">💡</span>Light carbs + protein. Avoid heavy fats before training.</div>
+      </div>
+      <div class="pre-post-card reveal delay-1">
+        <h5>🔄 Post-Workout Meals <span class="badge badge-green">30-90 min after</span></h5>
+        <div id="post-workout-meals"></div>
+        <div class="health-alert safe" style="margin-top:var(--sp-4);"><span class="alert-icon">💡</span>High protein for muscle repair + carbs to replenish glycogen.</div>
+      </div>
+    </div>
+
+    <!-- WORKOUT-SPECIFIC NUTRITION -->
+    <div class="glass-card anim-fade-in">
+      <h4 style="margin-bottom:var(--sp-5);">🎯 Nutrition by Workout Type</h4>
+      <div class="grid grid-3" id="workout-nutrition-grid"></div>
+    </div>
+
+  </main>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+<script src="js/app.js"></script>
+<script src="js/meal-data.js"></script>
+<script src="js/health-engine.js"></script>
+<script>
+const DAYS_FULL = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const WORKOUT_TYPES = [
+  { id:'rest',     label:'Rest',       icon:'😴', color:'var(--accent)' },
+  { id:'chest',    label:'Chest',      icon:'🏋️', color:'var(--primary)' },
+  { id:'back',     label:'Back',       icon:'🏋️', color:'var(--primary)' },
+  { id:'legs',     label:'Legs',       icon:'🦵', color:'var(--warning)' },
+  { id:'shoulders',label:'Shoulders',  icon:'💪', color:'var(--info)' },
+  { id:'arms',     label:'Arms',       icon:'💪', color:'var(--purple)' },
+  { id:'cardio',   label:'Cardio',     icon:'🏃', color:'var(--danger)' },
+  { id:'full',     label:'Full Body',  icon:'🔥', color:'var(--primary)' }
+];
+
+let schedule = { Mon:'rest', Tue:'chest', Wed:'back', Thu:'legs', Fri:'shoulders', Sat:'cardio', Sun:'rest' };
+let profile = {};
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (!KP.requireAuth()) return;
+  profile = KP.getProfile() || {};
+  schedule = KP.load('gym_schedule', schedule);
+
+  const targets = HealthEngine.getMacroTargets(profile);
+  document.getElementById('gym-cal').textContent     = targets.calories;
+  document.getElementById('gym-protein').textContent = targets.protein + 'g';
+  document.getElementById('gym-carbs').textContent   = targets.carbs + 'g';
+
+  renderSchedule();
+  renderPrePostMeals();
+  renderWorkoutNutrition();
+  KP.initReveal();
+});
+
+function renderSchedule() {
+  const grid = document.getElementById('schedule-grid');
+  const days  = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const daysFull = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+  const gymDayCount = Object.values(schedule).filter(v=>v!=='rest').length;
+  document.getElementById('gym-days-count').textContent = gymDayCount;
+
+  grid.innerHTML = days.map((d,i) => {
+    const wt = schedule[d] || 'rest';
+    const type = WORKOUT_TYPES.find(w=>w.id===wt)||WORKOUT_TYPES[0];
+    const isRest = wt==='rest';
+    return `
+    <div class="workout-card ${isRest?'rest-day':''}" onclick="cycleWorkout('${d}',this)" id="wc-${d}">
+      <div class="day-label">${d}</div>
+      <div style="font-size:1.8rem;margin-bottom:var(--sp-1);">${type.icon}</div>
+      <div class="workout-type" style="color:${type.color};font-size:.9rem;">${type.label}</div>
+      <div style="font-size:.7rem;color:var(--text-muted);">${daysFull[i]}</div>
+    </div>`;
+  }).join('');
+}
+
+function cycleWorkout(day, el) {
+  const current = schedule[day] || 'rest';
+  const idx  = WORKOUT_TYPES.findIndex(w=>w.id===current);
+  const next = WORKOUT_TYPES[(idx+1) % WORKOUT_TYPES.length];
+  schedule[day] = next.id;
+  const isRest = next.id === 'rest';
+  el.className = `workout-card ${isRest?'rest-day':''}`;
+  el.innerHTML = `
+    <div class="day-label">${day}</div>
+    <div style="font-size:1.8rem;margin-bottom:var(--sp-1);">${next.icon}</div>
+    <div class="workout-type" style="color:${next.color};font-size:.9rem;">${next.label}</div>`;
+  const gymDayCount = Object.values(schedule).filter(v=>v!=='rest').length;
+  document.getElementById('gym-days-count').textContent = gymDayCount;
+}
+
+function saveGymSchedule() {
+  KP.save('gym_schedule', schedule);
+  KP.toast('✅ Gym schedule saved! Meals adjusted accordingly.','success');
+}
+
+function renderPrePostMeals() {
+  const pre = [
+    { emoji:'🍌', name:'Banana + Peanut Butter', detail:'Quick carbs + protein · 180 kcal', why:'Fast energy for intense workout' },
+    { emoji:'🥣', name:'Oats with Milk', detail:'Complex carbs · 220 kcal', why:'Sustained energy release' },
+    { emoji:'🍳', name:'Egg White Omelette', detail:'Lean protein · 120 kcal', why:'Light, easy digest protein' }
+  ];
+  const post = [
+    { emoji:'🐔', name:'Chicken Tikka + Rice', detail:'40g protein · 380 kcal', why:'Fast protein + glycogen replenishment' },
+    { emoji:'🧀', name:'Paneer Bhurji + Roti', detail:'28g protein · 320 kcal', why:'Complete protein + carbs combo' },
+    { emoji:'🥛', name:'Protein Chaas + Sprouts', detail:'22g protein · 200 kcal', why:'Probiotics + protein for gut + muscle' }
+  ];
+
+  document.getElementById('pre-workout-meals').innerHTML = pre.map(m=>`
+    <div class="meal-suggest">
+      <span style="font-size:1.8rem;">${m.emoji}</span>
+      <div>
+        <div style="font-weight:600;font-size:.9rem;">${m.name}</div>
+        <div style="font-size:.75rem;color:var(--text-muted);">${m.detail}</div>
+        <div style="font-size:.75rem;color:var(--accent);margin-top:2px;">✅ ${m.why}</div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('post-workout-meals').innerHTML = post.map(m=>`
+    <div class="meal-suggest">
+      <span style="font-size:1.8rem;">${m.emoji}</span>
+      <div>
+        <div style="font-weight:600;font-size:.9rem;">${m.name}</div>
+        <div style="font-size:.75rem;color:var(--text-muted);">${m.detail}</div>
+        <div style="font-size:.75rem;color:var(--accent);margin-top:2px;">✅ ${m.why}</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderWorkoutNutrition() {
+  const types = [
+    { icon:'🏋️', name:'Strength Training', protein:'High (2g/kg)', carbs:'Moderate', focus:'Muscle growth & repair', foods:'Eggs, Chicken, Dal, Paneer' },
+    { icon:'🏃', name:'Cardio', protein:'Moderate (1.5g/kg)', carbs:'High', focus:'Energy & endurance', foods:'Banana, Oats, Idli, Rice' },
+    { icon:'🧘', name:'Yoga / Flexibility', protein:'Moderate (1.2g/kg)', carbs:'Low-Moderate', focus:'Recovery & flexibility', foods:'Khichdi, Fruits, Chaas, Light dal' }
+  ];
+  document.getElementById('workout-nutrition-grid').innerHTML = types.map(t=>`
+    <div class="glass-card hover-lift reveal">
+      <div style="font-size:2rem;margin-bottom:var(--sp-3);">${t.icon}</div>
+      <h5 style="margin-bottom:var(--sp-3);">${t.name}</h5>
+      <div style="font-size:.82rem;display:flex;flex-direction:column;gap:var(--sp-2);">
+        <div><span style="color:var(--accent);">Protein:</span> ${t.protein}</div>
+        <div><span style="color:var(--warning);">Carbs:</span> ${t.carbs}</div>
+        <div><span style="color:var(--text-muted);">Focus:</span> ${t.focus}</div>
+        <div style="margin-top:var(--sp-2);padding-top:var(--sp-2);border-top:1px solid var(--border);">
+          <span style="color:var(--primary);font-weight:600;">Best foods:</span><br/>${t.foods}
+        </div>
+      </div>
+    </div>`).join('');
+  KP.initReveal();
+}
+</script>
+<div style="text-align: center; padding: 15px; font-weight: bold; background: var(--bg-secondary); color: var(--text-primary); border-top: 1px solid var(--border); width: 100%; position: relative; z-index: 1000; font-size: 1.1rem; letter-spacing: 0.5px;">
+  Made with ❤️ by Avii
+</div>
+</body>
+</html>

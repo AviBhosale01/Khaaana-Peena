@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Chai Studio — Khaana Peena</title>
+<meta name="description" content="Customize your perfect chai — sugar, strength, milk, ginger, cardamom — all health-checked for you."/>
+<link rel="stylesheet" href="css/style.css"/>
+<link rel="stylesheet" href="css/components.css"/>
+<link rel="stylesheet" href="css/animations.css"/>
+<style>
+.studio-layout{display:grid;grid-template-columns:1fr 380px;gap:var(--sp-8);align-items:start;}
+.chai-cup-wrap{display:flex;flex-direction:column;align-items:center;gap:var(--sp-6);padding:var(--sp-8);background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-2xl);position:sticky;top:calc(var(--nav-h) + var(--sp-6));}
+.cup-body{width:160px;height:160px;border-radius:0 0 50% 50%;border:3px solid rgba(255,107,53,.3);position:relative;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5),inset 0 0 40px rgba(0,0,0,.2);transition:all 1s ease;}
+.cup-liquid{position:absolute;bottom:0;left:0;right:0;border-radius:0 0 48% 48%;transition:all .8s ease;height:100%;}
+.cup-sheen{position:absolute;top:8px;left:10px;width:30px;height:60%;background:rgba(255,255,255,.12);border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;transform:skewX(-10deg);}
+.cup-handle{position:absolute;right:-30px;top:30px;width:32px;height:80px;border:3px solid rgba(255,107,53,.3);border-left:none;border-radius:0 40px 40px 0;}
+.cup-saucer{width:210px;height:22px;border-radius:50%;background:rgba(255,107,53,.08);border:2px solid rgba(255,107,53,.2);margin-top:var(--sp-1);}
+.cup-label{font-family:var(--font-brand);font-size:1.1rem;background:var(--grad-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.addons-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp-2);}
+.addon-chip{border:1.5px solid var(--border);border-radius:var(--r-md);padding:var(--sp-2) var(--sp-3);cursor:pointer;transition:all var(--t-fast);display:flex;flex-direction:column;align-items:center;gap:4px;font-size:.72rem;font-weight:600;color:var(--text-muted);}
+.addon-chip .addon-icon{font-size:1.3rem;}
+.addon-chip:hover{border-color:var(--primary);color:var(--primary);}
+.addon-chip.selected{background:rgba(255,107,53,.12);border-color:var(--primary);color:var(--primary);}
+.bev-selector{display:flex;gap:var(--sp-3);flex-wrap:wrap;margin-bottom:var(--sp-6);}
+.bev-btn{padding:10px 20px;border:1.5px solid var(--border);border-radius:var(--r-full);cursor:pointer;transition:all var(--t-fast);font-size:.88rem;font-weight:600;color:var(--text-muted);background:transparent;display:flex;align-items:center;gap:var(--sp-2);}
+.bev-btn:hover{border-color:var(--border-warm);color:var(--primary);}
+.bev-btn.active{border-color:var(--primary);background:rgba(255,107,53,.1);color:var(--primary);}
+.preset-card{border:1.5px solid var(--border);border-radius:var(--r-md);padding:var(--sp-3) var(--sp-4);cursor:pointer;transition:all var(--t-fast);display:flex;align-items:center;gap:var(--sp-3);}
+.preset-card:hover{border-color:var(--primary);}
+.seg-control{display:flex;background:var(--bg-card-2);border-radius:var(--r-md);overflow:hidden;border:1px solid var(--border);}
+.seg-btn{flex:1;padding:9px;font-size:.8rem;font-weight:600;color:var(--text-muted);cursor:pointer;text-align:center;transition:all var(--t-fast);border:none;background:transparent;}
+.seg-btn.active{background:var(--primary);color:white;}
+@media(max-width:900px){.studio-layout{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand"><span class="nav-logo-text">Khaana Peena</span><span class="nav-logo-dot"></span></a>
+    <div class="nav-links">
+      <a href="dashboard.html" class="nav-link">Dashboard</a>
+      <a href="meal-planner.html" class="nav-link">Meal Planner</a>
+      <a href="chai-studio.html" class="nav-link active">☕ Chai Studio</a>
+    </div>
+    <div class="nav-actions" id="nav-user-area"></div>
+  </div>
+</nav>
+
+<div class="app-layout" style="padding-top:var(--nav-h);">
+  <aside class="sidebar">
+    <div id="sidebar-profile" style="margin-bottom:var(--sp-6);"></div>
+    <div class="sidebar-section">
+      <span class="sidebar-label">Main</span>
+      <a href="dashboard.html" class="sidebar-link"><span class="icon">🏠</span> Dashboard</a>
+      <a href="meal-planner.html" class="sidebar-link"><span class="icon">🍽️</span> Meal Planner</a>
+      <a href="chai-studio.html" class="sidebar-link active"><span class="icon">☕</span> Chai Studio</a>
+      <a href="customize.html" class="sidebar-link"><span class="icon">🎛️</span> Customize Food</a>
+    </div>
+    <div class="sidebar-section">
+      <span class="sidebar-label">Planning</span>
+      <a href="diet-plan.html" class="sidebar-link"><span class="icon">📋</span> Diet Plan</a>
+      <a href="gym-plan.html" class="sidebar-link"><span class="icon">🏋️</span> Gym Plan</a>
+      <a href="order.html" class="sidebar-link"><span class="icon">📦</span> Order</a>
+    </div>
+    <div class="sidebar-section">
+      <span class="sidebar-label">Saved Presets</span>
+      <div id="sidebar-presets">
+        <div style="font-size:.78rem;color:var(--text-muted);padding:0 var(--sp-3);">No presets yet</div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header anim-slide-down">
+      <h1 style="font-size:1.8rem;">☕ Chai Studio</h1>
+      <p style="margin-top:4px;">Craft your perfect beverage, ingredient by ingredient. Health-checked in real time.</p>
+    </div>
+
+    <!-- BEVERAGE SELECTOR -->
+    <div class="bev-selector anim-fade-in">
+      <button class="bev-btn active" onclick="selectBeverage('masala-chai',this)">☕ Masala Chai</button>
+      <button class="bev-btn" onclick="selectBeverage('green-tea',this)">🍵 Green Tea</button>
+      <button class="bev-btn" onclick="selectBeverage('buttermilk',this)">🥛 Masala Chaas</button>
+      <button class="bev-btn" onclick="selectBeverage('golden-milk',this)">🌟 Golden Milk</button>
+      <button class="bev-btn" onclick="selectBeverage('coconut-water',this)">🥥 Coconut Water</button>
+    </div>
+
+    <div class="studio-layout">
+      <!-- LEFT: CONTROLS -->
+      <div>
+        <!-- CHAI CONTROLS -->
+        <div id="controls-masala-chai" class="anim-fade-in">
+          <!-- Sugar -->
+          <div class="glass-card" style="margin-bottom:var(--sp-5);">
+            <h5 style="margin-bottom:var(--sp-4);">🍬 Sugar Level</h5>
+            <div id="sugar-diabetic-alert" style="display:none;" class="health-alert warn"><span class="alert-icon">🩸</span> Diabetic profile detected — consider 0 sugar or stevia!</div>
+            <div class="slider-wrap">
+              <div class="slider-row">
+                <input type="range" id="sugar-slider" min="0" max="4" step="0.5" value="2" oninput="updateChai()"/>
+                <span class="slider-val" id="sugar-val">2 tsp</span>
+              </div>
+              <div class="slider-labels"><span>No Sugar (0)</span><span>Light (1)</span><span>Normal (2)</span><span>Sweet (3)</span><span>Extra (4)</span></div>
+            </div>
+          </div>
+
+          <!-- Chai Patti Strength -->
+          <div class="glass-card" style="margin-bottom:var(--sp-5);">
+            <h5 style="margin-bottom:var(--sp-4);">🍵 Chai Strength</h5>
+            <div class="seg-control">
+              <button class="seg-btn" onclick="setStrength('light',this)">Light</button>
+              <button class="seg-btn active" onclick="setStrength('medium',this)">Medium</button>
+              <button class="seg-btn" onclick="setStrength('kadak',this)">Kadak 🔥</button>
+            </div>
+            <div id="kadak-alert" style="display:none;margin-top:var(--sp-3);" class="health-alert warn"><span class="alert-icon">❤️</span> Kadak chai has higher caffeine — monitor with hypertension.</div>
+          </div>
+
+          <!-- Milk -->
+          <div class="glass-card" style="margin-bottom:var(--sp-5);">
+            <div class="flex justify-between items-center" style="margin-bottom:var(--sp-4);">
+              <h5>🥛 Milk Ratio</h5>
+              <select id="milk-type" onchange="updateChai()" style="width:auto;font-size:.82rem;padding:6px 10px;">
+                <option value="regular milk">Regular Milk</option>
+                <option value="skim milk">Skim Milk</option>
+                <option value="oat milk">Oat Milk</option>
+                <option value="almond milk">Almond Milk</option>
+                <option value="soy milk">Soy Milk</option>
+              </select>
+            </div>
+            <div class="seg-control">
+              <button class="seg-btn" onclick="setMilk('no milk',this)">No Milk</button>
+              <button class="seg-btn" onclick="setMilk('light',this)">Light</button>
+              <button class="seg-btn active" onclick="setMilk('regular',this)">Regular</button>
+              <button class="seg-btn" onclick="setMilk('extra',this)">Extra</button>
+            </div>
+            <div id="lactose-alert" style="display:none;margin-top:var(--sp-3);" class="health-alert warn"><span class="alert-icon">🥛</span> Lactose intolerant detected! Using oat or almond milk is better for you.</div>
+          </div>
+
+          <!-- Ginger -->
+          <div class="glass-card" style="margin-bottom:var(--sp-5);">
+            <h5 style="margin-bottom:var(--sp-4);">🫚 Ginger Level</h5>
+            <div class="seg-control">
+              <button class="seg-btn" onclick="setGinger('none',this)">None</button>
+              <button class="seg-btn active" onclick="setGinger('light',this)">Light</button>
+              <button class="seg-btn" onclick="setGinger('medium',this)">Medium</button>
+              <button class="seg-btn" onclick="setGinger('strong',this)">Strong</button>
+            </div>
+            <div style="margin-top:var(--sp-3);font-size:.8rem;color:var(--text-muted);" id="ginger-info">Ginger has anti-inflammatory properties and aids digestion. ✅</div>
+          </div>
+
+          <!-- Add-ons -->
+          <div class="glass-card" style="margin-bottom:var(--sp-5);">
+            <h5 style="margin-bottom:var(--sp-4);">🌿 Masala Add-ons</h5>
+            <div class="addons-grid">
+              <div class="addon-chip" data-addon="cardamom" onclick="toggleAddon('cardamom',this)">
+                <span class="addon-icon">🟢</span>Cardamom
+              </div>
+              <div class="addon-chip" data-addon="cinnamon" onclick="toggleAddon('cinnamon',this)">
+                <span class="addon-icon">🍂</span>Cinnamon
+              </div>
+              <div class="addon-chip" data-addon="tulsi" onclick="toggleAddon('tulsi',this)">
+                <span class="addon-icon">🌿</span>Tulsi
+              </div>
+              <div class="addon-chip" data-addon="black pepper" onclick="toggleAddon('black pepper',this)">
+                <span class="addon-icon">🔵</span>Black Pepper
+              </div>
+              <div class="addon-chip" data-addon="fennel" onclick="toggleAddon('fennel',this)">
+                <span class="addon-icon">🌱</span>Saunf
+              </div>
+              <div class="addon-chip" data-addon="masala" onclick="toggleAddon('masala',this)">
+                <span class="addon-icon">🫙</span>Chai Masala
+              </div>
+            </div>
+          </div>
+
+          <!-- SAVE PRESET -->
+          <div class="glass-card" style="margin-bottom:var(--sp-5);">
+            <h5 style="margin-bottom:var(--sp-4);">💾 Save as Preset</h5>
+            <div class="flex gap-3">
+              <input type="text" id="preset-name" placeholder="e.g. My Gym Chai" style="flex:1;"/>
+              <button class="btn btn-primary btn-sm" onclick="savePreset()">Save</button>
+            </div>
+            <div id="presets-list" style="margin-top:var(--sp-4);display:flex;flex-direction:column;gap:var(--sp-2);"></div>
+          </div>
+        </div>
+
+        <!-- GREEN TEA CONTROLS -->
+        <div id="controls-green-tea" class="anim-fade-in" style="display:none;">
+          <div class="glass-card" style="margin-bottom:var(--sp-5);">
+            <h5 style="margin-bottom:var(--sp-4);">🍵 Tea Type</h5>
+            <div class="flex gap-2 flex-wrap">
+              <button class="seg-btn active" style="flex:0;padding:9px 18px;border:1.5px solid var(--primary);border-radius:var(--r-md);background:rgba(255,107,53,.1);color:var(--primary);" onclick="setGreenTeaType('plain',this)">Plain</button>
+              <button class="seg-btn" style="flex:0;padding:9px 18px;border:1.5px solid var(--border);border-radius:var(--r-md);" onclick="setGreenTeaType('lemon',this)">🍋 Lemon</button>
+              <button class="seg-btn" style="flex:0;padding:9px 18px;border:1.5px solid var(--border);border-radius:var(--r-md);" onclick="setGreenTeaType('mint',this)">🌿 Mint</button>
+              <button class="seg-btn" style="flex:0;padding:9px 18px;border:1.5px solid var(--border);border-radius:var(--r-md);" onclick="setGreenTeaType('ginger',this)">🫚 Ginger</button>
+              <button class="seg-btn" style="flex:0;padding:9px 18px;border:1.5px solid var(--border);border-radius:var(--r-md);" onclick="setGreenTeaType('tulsi',this)">🌿 Tulsi</button>
+            </div>
+          </div>
+          <div class="glass-card" style="margin-bottom:var(--sp-5);">
+            <h5 style="margin-bottom:var(--sp-4);">🍬 Sweetener</h5>
+            <div class="seg-control">
+              <button class="seg-btn active" onclick="setGTSweetener('none',this)">None ✅</button>
+              <button class="seg-btn" onclick="setGTSweetener('honey',this)">Honey</button>
+              <button class="seg-btn" onclick="setGTSweetener('stevia',this)">Stevia</button>
+              <button class="seg-btn" onclick="setGTSweetener('jaggery',this)">Jaggery</button>
+            </div>
+          </div>
+          <div class="health-alert safe"><span class="alert-icon">💚</span>Green tea supports metabolism, fat burning, and blood sugar regulation.</div>
+        </div>
+
+        <!-- COCONUT WATER -->
+        <div id="controls-coconut-water" style="display:none;" class="anim-fade-in">
+          <div class="health-alert safe" style="margin-bottom:var(--sp-5);"><span class="alert-icon">🥥</span>Fresh coconut water is nature's electrolyte drink — perfect for all health profiles including diabetes and hypertension!</div>
+          <div class="glass-card">
+            <h5 style="margin-bottom:var(--sp-4);">Options</h5>
+            <div class="flex gap-3 flex-wrap">
+              <button class="bev-btn active" style="font-size:.82rem;">🥥 Fresh Tender</button>
+              <button class="bev-btn" style="font-size:.82rem;">🥤 With Malai</button>
+              <button class="bev-btn" style="font-size:.82rem;">🍋 With Lemon</button>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-health btn-full btn-lg ripple-btn" onclick="orderBeverage()">📦 Order This Beverage</button>
+      </div>
+
+      <!-- RIGHT: CUP VISUAL + ANALYSIS -->
+      <div>
+        <!-- CUP -->
+        <div class="chai-cup-wrap anim-scale-in" id="cup-visual">
+          <div class="cup-label" id="bev-display-name">My Masala Chai</div>
+          <div style="position:relative;">
+            <div class="cup-body" id="cup-body">
+              <div class="cup-liquid" id="cup-liquid" style="background:rgb(160,80,40);"></div>
+              <div class="cup-sheen"></div>
+              <div class="cup-handle"></div>
+            </div>
+          </div>
+          <div class="cup-saucer"></div>
+
+          <div class="steam-wrap" style="position:relative;margin-top:var(--sp-3);" id="steam-area">
+            <div class="steam-line"></div>
+            <div class="steam-line"></div>
+            <div class="steam-line"></div>
+          </div>
+
+          <!-- NUTRITION DISPLAY -->
+          <div style="width:100%;margin-top:var(--sp-4);">
+            <div style="font-size:.75rem;color:var(--text-muted);text-align:center;margin-bottom:var(--sp-3);text-transform:uppercase;letter-spacing:.08em;">Nutrition Per Cup</div>
+            <div class="nutrition-grid" style="grid-template-columns:repeat(2,1fr);">
+              <div class="nutrition-item"><div class="nutrition-val grad-text" id="bev-cal">80</div><div class="nutrition-label">Calories</div></div>
+              <div class="nutrition-item"><div class="nutrition-val" style="color:var(--warning);" id="bev-sugar">8g</div><div class="nutrition-label">Sugar</div></div>
+              <div class="nutrition-item"><div class="nutrition-val" style="color:var(--accent);" id="bev-protein">3g</div><div class="nutrition-label">Protein</div></div>
+              <div class="nutrition-item"><div class="nutrition-val" style="color:var(--info);" id="bev-fat">3g</div><div class="nutrition-label">Fat</div></div>
+            </div>
+          </div>
+
+          <!-- HEALTH ANALYSIS -->
+          <div id="health-analysis" style="width:100%;margin-top:var(--sp-4);display:flex;flex-direction:column;gap:var(--sp-2);"></div>
+
+          <div style="font-size:.72rem;color:var(--text-muted);text-align:center;margin-top:var(--sp-3);">Analysis based on your health profile</div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+<script src="js/app.js"></script>
+<script src="js/meal-data.js"></script>
+<script src="js/health-engine.js"></script>
+<script src="js/beverage-engine.js"></script>
+<script>
+let currentBev = 'masala-chai';
+let profile = {};
+let chaiSettings = { sugar:2, chaiPatti:'medium', milk:'regular', milkType:'regular milk', ginger:'light', addons:[] };
+let gtSettings   = { sweetener:'none', type:'plain', strength:'medium', addons:[] };
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (!KP.requireAuth()) return;
+  profile = KP.getProfile() || {};
+
+  // Show sugar alert for diabetics
+  if (profile.conditions?.includes('diabetes')) {
+    document.getElementById('sugar-diabetic-alert').style.display = 'flex';
+    document.getElementById('sugar-slider').value = 0;
+    chaiSettings.sugar = 0;
+    document.getElementById('sugar-val').textContent = '0 tsp';
+  }
+
+  // Show lactose alert
+  if (profile.conditions?.includes('lactoseIntolerant')) {
+    document.getElementById('lactose-alert').style.display = 'flex';
+    document.getElementById('milk-type').value = 'oat milk';
+    chaiSettings.milkType = 'oat milk';
+  }
+
+  // Show BP alert
+  if (profile.conditions?.includes('hypertension')) {
+    // Will show when kadak is selected
+  }
+
+  loadPresets();
+  updateChai();
+});
+
+function selectBeverage(id, btn) {
+  currentBev = id;
+  document.querySelectorAll('.bev-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('[id^="controls-"]').forEach(c => c.style.display = 'none');
+  const ctrl = document.getElementById('controls-' + id);
+  if (ctrl) ctrl.style.display = 'block';
+
+  const names = {'masala-chai':'My Masala Chai','green-tea':'Green Tea','buttermilk':'Masala Chaas','golden-milk':'Golden Milk','coconut-water':'Coconut Water'};
+  const colors = {'masala-chai':'rgb(160,80,40)','green-tea':'rgba(100,160,50,.8)','buttermilk':'rgba(240,230,200,.7)','golden-milk':'rgba(220,170,30,.8)','coconut-water':'rgba(180,230,200,.6)'};
+
+  document.getElementById('bev-display-name').textContent = names[id] || id;
+  document.getElementById('cup-liquid').style.background = colors[id] || 'rgb(160,80,40)';
+  document.getElementById('steam-area').style.display = ['coconut-water'].includes(id) ? 'none' : 'flex';
+
+  updateAnalysis();
+}
+
+function updateChai() {
+  chaiSettings.sugar = parseFloat(document.getElementById('sugar-slider').value);
+  chaiSettings.milkType = document.getElementById('milk-type').value;
+  document.getElementById('sugar-val').textContent = chaiSettings.sugar + ' tsp';
+  document.getElementById('cup-liquid').style.background = BeverageEngine.getChaiColor(chaiSettings);
+  updateAnalysis();
+}
+
+function setStrength(v, btn) {
+  chaiSettings.chaiPatti = v;
+  updateSegControl(btn);
+  document.getElementById('kadak-alert').style.display = (v==='kadak' && profile.conditions?.includes('hypertension')) ? 'flex' : 'none';
+  updateChai();
+}
+function setMilk(v, btn) {
+  chaiSettings.milk = v;
+  updateSegControl(btn);
+  updateChai();
+}
+function setGinger(v, btn) {
+  chaiSettings.ginger = v;
+  updateSegControl(btn);
+  const info = document.getElementById('ginger-info');
+  info.textContent = v === 'none' ? 'No ginger added.' : 'Ginger aids digestion and has anti-inflammatory properties. ✅';
+  updateChai();
+}
+function setGreenTeaType(v,btn){ gtSettings.type=v; updateSegControlFlex(btn); updateAnalysis(); }
+function setGTSweetener(v,btn){ gtSettings.sweetener=v; updateSegControl(btn); updateAnalysis(); }
+
+function toggleAddon(a, el) {
+  el.classList.toggle('selected');
+  if (el.classList.contains('selected') && !chaiSettings.addons.includes(a)) chaiSettings.addons.push(a);
+  else chaiSettings.addons = chaiSettings.addons.filter(x => x !== a);
+  updateChai();
+}
+
+function updateSegControl(activeBtn) {
+  const parent = activeBtn.closest('.seg-control');
+  if (parent) parent.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+  activeBtn.classList.add('active');
+}
+function updateSegControlFlex(activeBtn) {
+  const parent = activeBtn.closest('.flex');
+  if (parent) parent.querySelectorAll('button').forEach(b => { b.style.borderColor='var(--border)'; b.style.background='transparent'; b.style.color='var(--text-muted)'; });
+  activeBtn.style.borderColor='var(--primary)'; activeBtn.style.background='rgba(255,107,53,.1)'; activeBtn.style.color='var(--primary)';
+}
+
+function updateAnalysis() {
+  const settings = currentBev === 'masala-chai' ? chaiSettings : gtSettings;
+  const result   = BeverageEngine.analyzeForProfile(currentBev, settings, profile);
+  const nutrition = result.nutrition;
+
+  document.getElementById('bev-cal').textContent     = nutrition.calories || 0;
+  document.getElementById('bev-sugar').textContent   = (nutrition.sugar || 0) + 'g';
+  document.getElementById('bev-protein').textContent = (nutrition.protein || 0) + 'g';
+  document.getElementById('bev-fat').textContent     = (nutrition.fat || 0) + 'g';
+
+  const analysisEl = document.getElementById('health-analysis');
+  analysisEl.innerHTML = result.messages.slice(0,4).map(m => `
+    <div class="health-alert ${m.type==='safe'?'safe':m.type==='warn'?'warn':'safe'}" style="padding:var(--sp-2) var(--sp-3);font-size:.78rem;">
+      <span class="alert-icon">${m.icon}</span>${m.msg}
+    </div>`).join('');
+}
+
+function savePreset() {
+  const name = document.getElementById('preset-name').value.trim();
+  if (!name) { KP.toast('Enter a preset name','warning'); return; }
+  BeverageEngine.savePreset(currentBev, {...chaiSettings}, name);
+  KP.toast(`✅ "${name}" saved!`,'success');
+  document.getElementById('preset-name').value = '';
+  loadPresets();
+}
+
+function loadPresets() {
+  const presets = BeverageEngine.getPresets('masala-chai');
+  const el = document.getElementById('presets-list');
+  el.innerHTML = presets.length ? presets.map(p => `
+    <div class="preset-card" onclick="loadPreset('${p.name}')">
+      <span>☕</span>
+      <div style="flex:1;"><div style="font-size:.85rem;font-weight:600;">${p.name}</div></div>
+      <span style="font-size:.7rem;color:var(--text-muted);">Load</span>
+    </div>`).join('') : '<div style="font-size:.78rem;color:var(--text-muted);">No saved presets yet.</div>';
+}
+
+function loadPreset(name) {
+  const presets = BeverageEngine.getPresets('masala-chai');
+  const p = presets.find(x => x.name === name);
+  if (!p) return;
+  chaiSettings = {...p.settings};
+  document.getElementById('sugar-slider').value = chaiSettings.sugar;
+  document.getElementById('sugar-val').textContent = chaiSettings.sugar + ' tsp';
+  if (chaiSettings.milkType) document.getElementById('milk-type').value = chaiSettings.milkType;
+  document.querySelectorAll('.addon-chip').forEach(c => {
+    const a = c.dataset.addon;
+    c.classList.toggle('selected', chaiSettings.addons?.includes(a));
+  });
+  KP.toast(`✅ "${name}" loaded!`,'success');
+  updateChai();
+}
+
+function orderBeverage() {
+  const names = {'masala-chai':'Masala Chai','green-tea':'Green Tea','buttermilk':'Masala Chaas','golden-milk':'Golden Milk','coconut-water':'Coconut Water'};
+  const cart = KP.load('cart', []);
+  cart.push({ id:currentBev, name:names[currentBev], emoji:'☕', calories:parseInt(document.getElementById('bev-cal').textContent)||80, customizations:[...chaiSettings.addons], isBeverage:true, addedAt:new Date().toISOString() });
+  KP.save('cart', cart);
+  KP.toast('✅ Beverage added to order!','success');
+  setTimeout(() => window.location.href='order.html', 800);
+}
+</script>
+<div style="text-align: center; padding: 15px; font-weight: bold; background: var(--bg-secondary); color: var(--text-primary); border-top: 1px solid var(--border); width: 100%; position: relative; z-index: 1000; font-size: 1.1rem; letter-spacing: 0.5px;">
+  Made with ❤️ by Avii
+</div>
+</body>
+</html>
